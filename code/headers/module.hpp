@@ -12,12 +12,10 @@ namespace r2d2::robos {
         /**
          * Module can listen up to 8 frame_types
          */
-        module_c(base_comm_c &comm) 
+        module_c(base_comm_c &comm)
             : base_module_c(comm),
               battery_request(comm, frame_type::BATTERY_LEVEL) {
-            comm.listen_for_frames({
-                frame_type::BATTERY_LEVEL
-            });
+            comm.listen_for_frames({frame_type::BATTERY_LEVEL});
         }
 
         /**
@@ -31,32 +29,37 @@ namespace r2d2::robos {
                 auto frame = comm.get_data();
 
                 // This module doesn't handel requests
-                if(frame.request) {
+                if (frame.request) {
                     continue;
                 }
 
                 // Process the frame
                 switch (frame.type) {
-                    case frame_type::BATTERY_LEVEL:
-                        {
-                            // Create object to read battery struct data
-                            auto battery_percentage = frame.as_frame_type<frame_type::BATTERY_LEVEL>().percentage;
-                            
-                            hwlib::cout << "battery percentage: " << static_cast<int>(battery_percentage) << "%" << hwlib::endl;
-                            if(battery_percentage <= 10) {
-                                frame_activity_led_state_s led_state;
-                                led_state.state = true;
-                            } else {
-                                frame_activity_led_state_s led_state;
-                                led_state.state = false;
-                            }
-                            // Data recieved, reset timer
-                            battery_request.mark_received();
-                        }
-                        break;
-                    default: break;
+                case frame_type::BATTERY_LEVEL: {
+                    // Create object to read battery struct data
+                    auto battery_percentage =
+                        frame.as_frame_type<frame_type::BATTERY_LEVEL>()
+                            .percentage;
+
+                    hwlib::cout << "battery percentage: "
+                                << static_cast<int>(battery_percentage) << "%"
+                                << hwlib::endl;
+                    if (battery_percentage <= 10) {
+                        frame_activity_led_state_s led_state;
+                        led_state.state = true;
+                        comm.send(led_state);
+                    } else {
+                        frame_activity_led_state_s led_state;
+                        led_state.state = false;
+                        comm.send(led_state);
+                    }
+                    // Data recieved, reset timer
+                    battery_request.mark_received();
+                } break;
+                default:
+                    break;
                 }
             }
         }
     };
-}
+} // namespace r2d2::robos
