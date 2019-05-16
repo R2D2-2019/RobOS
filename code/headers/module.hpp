@@ -7,6 +7,8 @@ namespace r2d2::robos {
     class module_c : public base_module_c {
     private:
         timed_request_c battery_request;
+        timed_request_c manual_control_request;
+        timed_request_c distance_sensor_request;
 
     public:
         /**
@@ -14,8 +16,12 @@ namespace r2d2::robos {
          */
         module_c(base_comm_c &comm)
             : base_module_c(comm),
-              battery_request(comm, frame_type::BATTERY_LEVEL) {
-            comm.listen_for_frames({frame_type::BATTERY_LEVEL});
+              battery_request(comm, frame_type::BATTERY_LEVEL),
+              manual_control_request(comm, frame_type::MOVEMENT_CONTROL),
+              distance_sensor_request(comm, frame_type::DISTANCE) {
+            comm.listen_for_frames({frame_type::BATTERY_LEVEL,
+                                    frame_type::MOVEMENT_CONTROL,
+                                    frame_type::DISTANCE});
         }
 
         /**
@@ -24,6 +30,8 @@ namespace r2d2::robos {
         void process() override {
             // Set out all polling requests
             battery_request.process();
+            manual_control_request.process();
+            distance_sensor_request.process();
 
             while (comm.has_data()) {
                 auto frame = comm.get_data();
@@ -44,17 +52,14 @@ namespace r2d2::robos {
                     hwlib::cout << "battery percentage: "
                                 << static_cast<int>(battery_percentage) << "%"
                                 << hwlib::endl;
-                    if (battery_percentage <= 10) {
-                        frame_activity_led_state_s led_state;
-                        led_state.state = true;
-                        comm.send(led_state);
-                    } else {
-                        frame_activity_led_state_s led_state;
-                        led_state.state = false;
-                        comm.send(led_state);
-                    }
                     // Data recieved, reset timer
                     battery_request.mark_received();
+                } break;
+                case frame_type::DISTANCE: {
+
+                } break;
+                case frame_type::MOVEMENT_CONTROL: {
+
                 } break;
                 default:
                     break;
