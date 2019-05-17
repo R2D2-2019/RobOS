@@ -1,14 +1,18 @@
 #pragma once
 
 #include <base_module.hpp>
-#include <timed_request.hpp>
+#include <packet_action.hpp>
+
+#include <array>
 
 namespace r2d2::robos {
     class module_c : public base_module_c {
     private:
-        timed_request_c battery_request;
-        timed_request_c manual_control_request;
-        timed_request_c distance_sensor_request;
+        std::array<frame_action_c *, frame_type::COUNT> actions = {0};
+
+        battery_frame_action_c battery_action;
+        manual_control_frame_action_c manual_control_action;
+        distance_frame_action_c distance_action;
 
     public:
         /**
@@ -16,38 +20,12 @@ namespace r2d2::robos {
          */
         module_c(base_comm_c &comm)
             : base_module_c(comm),
-              battery_request(comm, frame_type::BATTERY_LEVEL),
-              manual_control_request(comm, frame_type::MOVEMENT_CONTROL),
-              distance_sensor_request(comm, frame_type::DISTANCE) {
+              battery_action(comm, actions),
+              manual_control_action(comm, actions),
+              distance_action(comm, actions) {
             comm.listen_for_frames({frame_type::BATTERY_LEVEL,
-                                    frame_type::MOVEMENT_CONTROL,
+                                    frame_type::MANUAL_CONTROL,
                                     frame_type::DISTANCE});
-        }
-
-        void process_battery_level(frame_s frame) {
-            // Create object to read battery struct data
-            auto battery_percentage =
-                frame.as_frame_type<frame_type::BATTERY_LEVEL>().percentage;
-
-            hwlib::cout << "battery percentage: "
-                        << static_cast<int>(battery_percentage) << "%"
-                        << hwlib::endl;
-            // Data recieved, reset timer
-            battery_request.mark_received();
-        }
-
-        void process_distance(frame_s frame) {
-            auto distance_frame = frame.as_frame_type<frame_type::DISTANCE>();
-
-            // Data recieved, reset timer
-            distance_sensor_request.mark_received();
-        }
-        void process_movement_control(frame_s frame) {
-            auto distance_frame =
-                frame.as_frame_type<frame_type::MOVEMENT_CONTROL>();
-
-            // Data recieved, reset timer
-            manual_control_request.mark_received();
         }
 
         /**
@@ -55,9 +33,11 @@ namespace r2d2::robos {
          */
         void process() override {
             // Set out all polling requests
-            battery_request.process();
-            manual_control_request.process();
-            distance_sensor_request.process();
+            for (auto action : actions) {
+                if (action != nullptr) {
+                    action->request_packet();
+                }
+            }
 
             while (comm.has_data()) {
                 auto frame = comm.get_data();
@@ -67,21 +47,11 @@ namespace r2d2::robos {
                     continue;
                 }
 
-                // Process the frame
-                switch (frame.type) {
-                case frame_type::BATTERY_LEVEL:
-                    process_battery_level(frame);
-                    break;
-                case frame_type::DISTANCE:
-                    process_distance(frame);
-                    break;
-                case frame_type::MOVEMENT_CONTROL:
-                    process_movement_control(frame);
-                    break;
-                default:
-                    break;
+                frame_action_c *action = actions[frame.type];
+                if (action != nullptr) {
+                    action->process_packet(frame);
                 }
             }
         }
-    };
+    }; // class module_c
 } // namespace r2d2::robos
