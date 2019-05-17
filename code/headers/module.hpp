@@ -16,13 +16,14 @@ namespace r2d2::robos {
 
     public:
         /**
-         * Module can listen up to 8 frame_types
+         * @param comm the communication bus
          */
         module_c(base_comm_c &comm)
             : base_module_c(comm),
               battery_action(comm, actions),
               manual_control_action(comm, actions),
               distance_action(comm, actions) {
+            // Module can listen up to 8 frame_types as of now
             comm.listen_for_frames({frame_type::BATTERY_LEVEL,
                                     frame_type::MANUAL_CONTROL,
                                     frame_type::DISTANCE});
@@ -47,6 +48,8 @@ namespace r2d2::robos {
                     continue;
                 }
 
+                // process the received packet using the appropriate
+                // frame-handler
                 frame_action_c *action = actions[frame.type];
                 if (action != nullptr) {
                     action->process_packet(frame);

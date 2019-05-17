@@ -19,6 +19,9 @@ namespace r2d2::robos {
             actions[type] = this;
         }
 
+        /**
+         * process the packet
+         */
         virtual void process_packet(frame_s &frame) = 0;
     }; // class frame_action_c
 
