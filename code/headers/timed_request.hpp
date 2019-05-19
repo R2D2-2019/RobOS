@@ -10,18 +10,17 @@ namespace r2d2::robos {
      */
     class timed_request_c {
     private:
-        base_comm_c &comm;
-
         uint_fast32_t start_time;
         const uint_fast32_t timeout;
 
     protected:
+        base_comm_c &comm;
         const frame_type type;
 
     public:
         timed_request_c(base_comm_c &comm, frame_type type,
                         uint_fast32_t timeout = 100)
-            : comm(comm), start_time(0), timeout(timeout), type(type) {
+            : start_time(0), timeout(timeout), comm(comm), type(type) {
         }
 
         /**

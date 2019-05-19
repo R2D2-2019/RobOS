@@ -1,7 +1,7 @@
 #pragma once
 
 #include <base_module.hpp>
-#include <packet_action.hpp>
+#include <frame_action.hpp>
 
 #include <array>
 
@@ -53,6 +53,12 @@ namespace r2d2::robos {
                 frame_action_c *action = actions[frame.type];
                 if (action != nullptr) {
                     action->process_packet(frame);
+                }
+            }
+
+            for (auto action : actions) {
+                if (action != nullptr) {
+                    action->reply_to_data();
                 }
             }
         }
