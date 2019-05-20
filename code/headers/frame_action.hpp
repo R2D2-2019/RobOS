@@ -13,17 +13,18 @@ namespace r2d2::robos {
     }
 
     class frame_action_c : public timed_request_c {
+    public:
+        using actions_t = std::array<frame_action_c *, frame_type::COUNT>;
+
     protected:
         bool changed = false;
 
     public:
-        template <typename T>
-        frame_action_c(base_comm_c &comm, frame_type type, T &actions)
+        frame_action_c(base_comm_c &comm, frame_type type, actions_t &actions)
             : timed_request_c(comm, type) {
             actions[type] = this;
         }
-        template <typename T>
-        frame_action_c(base_comm_c &comm, frame_type type, T &actions,
+        frame_action_c(base_comm_c &comm, frame_type type, actions_t &actions,
                        uint32_t timeout)
             : timed_request_c(comm, type, timeout) {
             actions[type] = this;
@@ -44,8 +45,7 @@ namespace r2d2::robos {
         static constexpr char battery_message[10] = "Battery: ";
 
     public:
-        template <typename T>
-        battery_frame_action_c(base_comm_c &comm, T &actions)
+        battery_frame_action_c(base_comm_c &comm, actions_t &actions)
             : frame_action_c(comm, frame_type::BATTERY_LEVEL, actions) {
         }
 
@@ -92,8 +92,7 @@ namespace r2d2::robos {
         frame_manual_control_s man_control;
 
     public:
-        template <typename T>
-        manual_control_frame_action_c(base_comm_c &comm, T &actions)
+        manual_control_frame_action_c(base_comm_c &comm, actions_t &actions)
             : frame_action_c(comm, frame_type::MANUAL_CONTROL, actions) {
         }
 
@@ -119,6 +118,10 @@ namespace r2d2::robos {
 
                 comm.send(frame);
 
+                // hwlib::cout << man_control.brake << ", " <<
+                // man_control.rotation
+                //             << ", " << man_control.speed << hwlib::endl;
+
                 changed = false;
             }
         }
@@ -130,8 +133,7 @@ namespace r2d2::robos {
         static constexpr char distance_message[11] = "Distance: ";
 
     public:
-        template <typename T>
-        distance_frame_action_c(base_comm_c &comm, T &actions)
+        distance_frame_action_c(base_comm_c &comm, actions_t &actions)
             : frame_action_c(comm, frame_type::DISTANCE, actions) {
         }
 

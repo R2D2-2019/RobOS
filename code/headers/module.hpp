@@ -8,7 +8,7 @@
 namespace r2d2::robos {
     class module_c : public base_module_c {
     private:
-        std::array<frame_action_c *, frame_type::COUNT> actions = {0};
+        frame_action_c::actions_t actions = {0};
 
         battery_frame_action_c battery_action;
         manual_control_frame_action_c manual_control_action;
