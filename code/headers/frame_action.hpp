@@ -8,10 +8,6 @@
 #include <charconv>
 
 namespace r2d2::robos {
-    void int_to_str(unsigned int i, char *str, unsigned int lenght) {
-        std::to_chars(str, str + lenght, i);
-    }
-
     class frame_action_c : public timed_request_c {
     public:
         using actions_t = std::array<frame_action_c *, frame_type::COUNT>;
@@ -19,13 +15,16 @@ namespace r2d2::robos {
     protected:
         bool changed = false;
 
+        void int_to_str(unsigned int i, char *str, unsigned int lenght) {
+            std::to_chars(str, str + lenght, i);
+        }
+
     public:
         frame_action_c(base_comm_c &comm, frame_type type, actions_t &actions)
             : timed_request_c(comm, type) {
             actions[type] = this;
         }
-        frame_action_c(base_comm_c &comm, frame_type type, actions_t &actions,
-                       uint32_t timeout)
+        frame_action_c(base_comm_c &comm, frame_type type, actions_t &actions, uint32_t timeout)
             : timed_request_c(comm, type, timeout) {
             actions[type] = this;
         }
@@ -37,136 +36,4 @@ namespace r2d2::robos {
 
         virtual void reply_to_data() = 0;
     }; // class frame_action_c
-
-    class battery_frame_action_c : public frame_action_c {
-    private:
-        uint8_t battery_percentage;
-
-        static constexpr char battery_message[10] = "Battery: ";
-
-    public:
-        battery_frame_action_c(base_comm_c &comm, actions_t &actions)
-            : frame_action_c(comm, frame_type::BATTERY_LEVEL, actions) {
-        }
-
-        void process_packet(frame_s &frame) override {
-            auto battery_frame =
-                frame.as_frame_type<frame_type::BATTERY_LEVEL>();
-
-            if (battery_percentage != battery_frame.percentage) {
-                changed = true;
-                battery_percentage = battery_frame.percentage;
-            }
-
-            // Data recieved, reset timer
-            mark_received();
-        }
-
-        virtual void reply_to_data() {
-            if (changed) {
-                frame_display_8x8_character_s frame = {0};
-                frame.x = 0;
-                frame.y = 0;
-                frame.red = 0xFF;
-                frame.green = 0xFF;
-                frame.blue = 0xFF;
-
-                for (unsigned int i = 0; i < 9; i++) {
-                    frame.characters[i] = battery_message[i];
-                }
-                int_to_str(battery_percentage, frame.characters + 9, 10);
-
-                comm.send(frame);
-
-                changed = false;
-            }
-        }
-    }; // class battery_frame_action_c
-
-    bool operator!=(frame_manual_control_s &lhs, frame_manual_control_s &rhs) {
-        return (lhs.brake != rhs.brake) || (lhs.speed != rhs.speed) ||
-               (lhs.rotation != rhs.rotation);
-    }
-    class manual_control_frame_action_c : public frame_action_c {
-    private:
-        frame_manual_control_s man_control;
-
-    public:
-        manual_control_frame_action_c(base_comm_c &comm, actions_t &actions)
-            : frame_action_c(comm, frame_type::MANUAL_CONTROL, actions) {
-        }
-
-        void process_packet(frame_s &frame) override {
-            auto man_control_frame =
-                frame.as_frame_type<frame_type::MANUAL_CONTROL>();
-
-            if (man_control != man_control_frame) {
-                man_control = man_control_frame;
-                changed = true;
-            }
-            // Data recieved, reset timer
-            mark_received();
-        }
-
-        virtual void reply_to_data() {
-            if (changed) {
-                frame_movement_control_s frame;
-
-                frame.brake = man_control.brake;
-                frame.rotation = man_control.rotation;
-                frame.speed = man_control.speed;
-
-                comm.send(frame);
-
-                // hwlib::cout << man_control.brake << ", " <<
-                // man_control.rotation
-                //             << ", " << man_control.speed << hwlib::endl;
-
-                changed = false;
-            }
-        }
-    }; // class manual_control_frame_action_c
-    class distance_frame_action_c : public frame_action_c {
-    private:
-        uint16_t distance_mm;
-
-        static constexpr char distance_message[11] = "Distance: ";
-
-    public:
-        distance_frame_action_c(base_comm_c &comm, actions_t &actions)
-            : frame_action_c(comm, frame_type::DISTANCE, actions) {
-        }
-
-        void process_packet(frame_s &frame) override {
-            auto distance_frame = frame.as_frame_type<frame_type::DISTANCE>();
-
-            if (distance_mm != distance_frame.mm) {
-                changed = true;
-                distance_mm = distance_frame.mm;
-            }
-
-            // Data recieved, reset timer
-            mark_received();
-        }
-
-        virtual void reply_to_data() {
-            if (changed) {
-                frame_display_8x8_character_s frame = {0};
-                frame.x = 0;
-                frame.y = 2;
-                frame.red = 0xFF;
-                frame.green = 0xFF;
-                frame.blue = 0xFF;
-
-                for (unsigned int i = 0; i < 10; i++) {
-                    frame.characters[i] = distance_message[i];
-                }
-                int_to_str(distance_mm, frame.characters + 10, 10);
-
-                comm.send(frame);
-
-                changed = false;
-            }
-        }
-    }; // class distance_frame_action_c
 } // namespace r2d2::robos

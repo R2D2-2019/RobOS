@@ -3,6 +3,10 @@
 #include <base_module.hpp>
 #include <frame_action.hpp>
 
+#include <battery_frame_action.hpp>
+#include <manual_control_frame_action.hpp>
+#include <distance_frame_action.hpp>
+
 #include <array>
 
 namespace r2d2::robos {
@@ -22,7 +26,7 @@ namespace r2d2::robos {
             : base_module_c(comm),
               battery_action(comm, actions),
               manual_control_action(comm, actions),
-              distance_action(comm, actions) {
+              distance_action(comm, actions){
             // Module can listen up to 8 frame_types as of now
             comm.listen_for_frames({frame_type::BATTERY_LEVEL,
                                     frame_type::MANUAL_CONTROL,
