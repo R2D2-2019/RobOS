@@ -1,10 +1,9 @@
 #pragma once
 
-#include <hwlib.hpp>
 #include <frame_action.hpp>
+#include <hwlib.hpp>
 
-
-namespace r2d2::robos {    
+namespace r2d2::robos {
     class manual_control_frame_action_c : public frame_action_c {
     private:
         frame_manual_control_s man_control;

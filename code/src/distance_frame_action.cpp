@@ -1,7 +1,8 @@
 #include <../headers/distance_frame_action.hpp>
 
 namespace r2d2::robos {
-    distance_frame_action_c::distance_frame_action_c(base_comm_c &comm, actions_t &actions)
+    distance_frame_action_c::distance_frame_action_c(base_comm_c &comm,
+                                                     actions_t &actions)
         : frame_action_c(comm, frame_type::DISTANCE, actions) {
     }
 
@@ -36,6 +37,5 @@ namespace r2d2::robos {
             changed = false;
         }
     }
-
 
 } // namespace r2d2::robos

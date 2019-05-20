@@ -24,7 +24,8 @@ namespace r2d2::robos {
             : timed_request_c(comm, type) {
             actions[type] = this;
         }
-        frame_action_c(base_comm_c &comm, frame_type type, actions_t &actions, uint32_t timeout)
+        frame_action_c(base_comm_c &comm, frame_type type, actions_t &actions,
+                       uint32_t timeout)
             : timed_request_c(comm, type, timeout) {
             actions[type] = this;
         }

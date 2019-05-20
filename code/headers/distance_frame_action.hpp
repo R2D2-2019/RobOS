@@ -1,7 +1,7 @@
 #pragma once
 
-#include <hwlib.hpp>
 #include <frame_action.hpp>
+#include <hwlib.hpp>
 
 namespace r2d2::robos {
     class distance_frame_action_c : public frame_action_c {

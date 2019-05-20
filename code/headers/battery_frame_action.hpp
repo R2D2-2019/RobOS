@@ -1,7 +1,7 @@
 #pragma once
 
-#include <hwlib.hpp>
 #include <frame_action.hpp>
+#include <hwlib.hpp>
 
 namespace r2d2::robos {
     class battery_frame_action_c : public frame_action_c {
@@ -18,4 +18,3 @@ namespace r2d2::robos {
         virtual void reply_to_data();
     }; // class battery_frame_action_c
 } // namespace r2d2::robos
-
