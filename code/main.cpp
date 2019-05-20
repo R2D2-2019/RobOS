@@ -2,6 +2,7 @@
 
 #include <comm.hpp>
 #include <module.hpp>
+#include <test_module.hpp>
 
 int main(void) {
     // kill the watchdog
@@ -12,8 +13,12 @@ int main(void) {
     r2d2::comm_c comm;
     auto robos = r2d2::robos::module_c(comm);
 
+    r2d2::comm_c comm2;
+    auto power = r2d2::test_module::module_c(comm2);
+
     for (;;) {
         robos.process();
-        hwlib::wait_ms(100);
+        power.process();
+        hwlib::wait_ms(150);
     }
 }

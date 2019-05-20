@@ -50,14 +50,23 @@ namespace r2d2::robos {
             } else {
                 green_cursor(cursor_color);
             }
+            comm.send(cursor_color);
 
-            for (unsigned int i = 0; i < 9; i++) {
+            for (unsigned int i = 0; i < 10; i++) {
                 display_characters.characters[i] = battery_message[i];
             }
-            int_to_str(battery_percentage, display_characters.characters + 9,
-                       10);
+            display_characters.characters[10] = '\0';
+            cursor_position.cursor_x = 0;
+            comm.send(cursor_position);
+            comm.send(display_characters);
 
-            comm.send(cursor_color);
+            cursor_position.cursor_x = 100;
+            for (unsigned int i = 0; i < 10; i++) {
+                display_characters.characters[i] = ' ';
+            }
+            display_characters.characters[10] = '\0';
+            int_to_str(battery_percentage, display_characters.characters, 3);
+            comm.send(cursor_position);
             comm.send(display_characters);
 
             changed = false;
