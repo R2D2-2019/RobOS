@@ -4,6 +4,30 @@ namespace r2d2::robos {
     distance_frame_action_c::distance_frame_action_c(base_comm_c &comm,
                                                      actions_t &actions)
         : frame_action_c(comm, frame_type::DISTANCE, actions) {
+
+        // init color
+        cursor_color.red = 0xFF;
+        cursor_color.green = 0xFF;
+        cursor_color.blue = 0xFF;
+        cursor_color.cursor_id = distance_cursor_type;
+        comm.send(cursor_color);
+
+        // init position
+        cursor_position.cursor_id = distance_cursor_type;
+        cursor_position.cursor_x = 0;
+        cursor_position.cursor_y = (8 * 2);
+        comm.send(cursor_position);
+        cursor_position.cursor_x = (8 * 10);
+
+        // init characters
+        cursor_chars.cursor_id = distance_cursor_type;
+        for (unsigned int i = 0; i < 11; i++) {
+            cursor_chars.characters[i] = distance_message[i];
+        }
+        comm.send(cursor_chars);
+        for (unsigned int i = 0; i < 11; i++) {
+            cursor_chars.characters[i] = '\0';
+        }
     }
 
     void distance_frame_action_c::process_packet(frame_s &frame) {
@@ -20,19 +44,10 @@ namespace r2d2::robos {
 
     void distance_frame_action_c::reply_to_data() {
         if (changed) {
-            frame_display_8x8_character_s frame = {0};
-            frame.x = 0;
-            frame.y = 2;
-            frame.red = 0xFF;
-            frame.green = 0xFF;
-            frame.blue = 0xFF;
+            int_to_str(distance_mm, cursor_chars.characters + 10, 10);
 
-            for (unsigned int i = 0; i < 10; i++) {
-                frame.characters[i] = distance_message[i];
-            }
-            int_to_str(distance_mm, frame.characters + 10, 10);
-
-            comm.send(frame);
+            comm.send(cursor_position);
+            comm.send(cursor_chars);
 
             changed = false;
         }
