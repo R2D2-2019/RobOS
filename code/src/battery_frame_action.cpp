@@ -14,6 +14,9 @@ namespace r2d2::robos {
         // Set battery information to the top left corner
         cursor_position.cursor_x = 0;
         cursor_position.cursor_y = 0;
+        // Send cursor position to display, this only has to be done once
+        // since the position won't change
+        comm.send(cursor_position);
     }
 
     void battery_frame_action_c::red_cursor(frame_cursor_color_s &frame) {
@@ -55,7 +58,6 @@ namespace r2d2::robos {
                        10);
 
             comm.send(cursor_color);
-            comm.send(cursor_position);
             comm.send(display_characters);
 
             changed = false;
