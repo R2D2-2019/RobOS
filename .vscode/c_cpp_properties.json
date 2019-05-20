@@ -5,6 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/../../libraries/hwlib/library",
+                "${workspaceFolder}/code/headers",
                 "${workspaceFolder}/../../libraries/datastructures/code/headers",
                 "${workspaceFolder}/../../libraries/internal_communication/code/headers",
                 "${workspaceFolder}/../../libraries/trng_library/code/headers",
