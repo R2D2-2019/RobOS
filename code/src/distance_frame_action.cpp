@@ -31,10 +31,10 @@ namespace r2d2::robos {
     }
 
     void distance_frame_action_c::process_packet(frame_s &frame) {
-        auto battery_frame = frame.as_frame_type<frame_type::DISTANCE>();
-        if (distance_mm != battery_frame.percentage) {
+        auto distance_frame = frame.as_frame_type<frame_type::DISTANCE>();
+        if (distance_mm != distance_frame.mm) {
             changed = true;
-            distance_mm = battery_frame.percentage;
+            distance_mm = distance_frame.mm;
         }
         // Data recieved, reset timer
         mark_received();

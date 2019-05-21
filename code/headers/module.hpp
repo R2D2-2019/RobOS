@@ -6,6 +6,7 @@
 #include <battery_frame_action.hpp>
 #include <distance_frame_action.hpp>
 #include <manual_control_frame_action.hpp>
+#include <temperature_frame_action.hpp>
 
 #include <array>
 
@@ -17,6 +18,7 @@ namespace r2d2::robos {
         battery_frame_action_c battery_action;
         manual_control_frame_action_c manual_control_action;
         distance_frame_action_c distance_action;
+        temperature_frame_action_c temperature_action;
 
     public:
         /**
@@ -26,11 +28,12 @@ namespace r2d2::robos {
             : base_module_c(comm),
               battery_action(comm, actions),
               manual_control_action(comm, actions),
-              distance_action(comm, actions) {
+              distance_action(comm, actions),
+              temperature_action(comm, actions) {
             // Module can listen up to 8 frame_types as of now
-            comm.listen_for_frames({frame_type::BATTERY_LEVEL,
-                                    frame_type::MANUAL_CONTROL,
-                                    frame_type::DISTANCE});
+            comm.listen_for_frames(
+                {frame_type::BATTERY_LEVEL, frame_type::MANUAL_CONTROL,
+                 frame_type::DISTANCE, frame_type::TEMPERATURE});
         }
 
         /**
@@ -46,7 +49,6 @@ namespace r2d2::robos {
 
             while (comm.has_data()) {
                 auto frame = comm.get_data();
-
                 // This module doesn't handel requests
                 if (frame.request) {
                     continue;
