@@ -34,7 +34,7 @@ namespace r2d2::test_module {
                     current_value -= 1;
                     battery_level.percentage = current_value;
                 } else {
-                    current_value = 30;
+                    current_value = 50;
                 }
 
                 comm.send(battery_level);

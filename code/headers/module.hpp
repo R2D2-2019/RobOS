@@ -13,7 +13,7 @@
 namespace r2d2::robos {
     class module_c : public base_module_c {
     private:
-        frame_action_c::actions_t actions = {0};
+        frame_action_c::actions_t actions = {};
 
         battery_frame_action_c battery_action;
         manual_control_frame_action_c manual_control_action;
@@ -26,11 +26,12 @@ namespace r2d2::robos {
          */
         module_c(base_comm_c &comm)
             : base_module_c(comm),
+              // initialize all frame actions
               battery_action(comm, actions),
               manual_control_action(comm, actions),
               distance_action(comm, actions),
               temperature_action(comm, actions) {
-            // Module can listen up to 8 frame_types as of now
+            // Note: module can listen up to 8 frame_types as of now
             comm.listen_for_frames(
                 {frame_type::BATTERY_LEVEL, frame_type::MANUAL_CONTROL,
                  frame_type::DISTANCE, frame_type::TEMPERATURE});
@@ -47,6 +48,7 @@ namespace r2d2::robos {
                 }
             }
 
+            // process received frames
             while (comm.has_data()) {
                 auto frame = comm.get_data();
                 // This module doesn't handel requests
@@ -62,6 +64,8 @@ namespace r2d2::robos {
                 }
             }
 
+            // reply to received frames, this makes it possible to only send a
+            // reply when the received frame is different from the last one
             for (auto action : actions) {
                 if (action != nullptr) {
                     action->reply_to_data();
