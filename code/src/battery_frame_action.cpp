@@ -4,7 +4,6 @@ namespace r2d2::robos {
     battery_frame_action_c::battery_frame_action_c(base_comm_c &comm,
                                                    actions_t &actions)
         : frame_action_c(comm, frame_type::BATTERY_LEVEL, actions) {
-        // Set cursor to Green as default
         static constexpr uint8_t cursor_id =
             static_cast<uint8_t>(claimed_display_cursor::ROBOS_POWER_CURSOR);
         cursor_color.cursor_id = cursor_id;
