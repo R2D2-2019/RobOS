@@ -1,12 +1,12 @@
 #pragma once
 
-#include <base_module.hpp>
-#include <frame_action.hpp>
-
 #include <battery_frame_action.hpp>
 #include <distance_frame_action.hpp>
 #include <manual_control_frame_action.hpp>
 #include <temperature_frame_action.hpp>
+
+#include <base_module.hpp>
+#include <timed_request.hpp>
 
 #include <array>
 
@@ -19,6 +19,8 @@ namespace r2d2::robos {
         manual_control_frame_action_c manual_control_action;
         distance_frame_action_c distance_action;
         temperature_frame_action_c temperature_action;
+
+        std::array<timed_request_c, frame_type::COUNT> requests = {};
 
     public:
         /**
@@ -35,6 +37,10 @@ namespace r2d2::robos {
             comm.listen_for_frames(
                 {frame_type::BATTERY_LEVEL, frame_type::MANUAL_CONTROL,
                  frame_type::DISTANCE, frame_type::TEMPERATURE});
+
+            for (const uint8_t type : comm.get_accepted_frame_types()) {
+                requests[type] = {&comm, static_cast<frame_type>(type)};
+            }
         }
 
         /**
@@ -42,9 +48,9 @@ namespace r2d2::robos {
          */
         void process() override {
             // Set out all polling requests
-            for (auto action : actions) {
-                if (action != nullptr) {
-                    action->request_packet();
+            for (auto &request : requests) {
+                if (request.get_type() != frame_type::NONE) {
+                    request.request_packet();
                 }
             }
 
@@ -61,6 +67,12 @@ namespace r2d2::robos {
                 frame_action_c *action = actions[frame.type];
                 if (action != nullptr) {
                     action->process_packet(frame);
+                }
+
+                // Data recieved, reset timer
+                auto &request = requests[frame.type];
+                if (request.get_type() != frame_type::NONE) {
+                    request.mark_received();
                 }
             }
 

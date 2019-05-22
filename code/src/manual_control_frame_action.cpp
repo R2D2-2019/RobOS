@@ -19,8 +19,6 @@ namespace r2d2::robos {
             man_control = man_control_frame;
             changed = true;
         }
-        // Data recieved, reset timer
-        mark_received();
     }
 
     void manual_control_frame_action_c::reply_to_data() {

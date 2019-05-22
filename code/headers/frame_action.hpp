@@ -2,10 +2,9 @@
 
 #include <base_comm.hpp>
 #include <hwlib.hpp>
-#include <timed_request.hpp>
 
 namespace r2d2::robos {
-    class frame_action_c : public timed_request_c {
+    class frame_action_c {
     public:
         // this array is suppliedf to constructors, to prevent copy-pasting the
         // whole type definition, this type is created
@@ -15,6 +14,7 @@ namespace r2d2::robos {
         // set to true if the data from the frame is changed since the last call
         // of reply_to_data
         bool changed = false;
+        base_comm_c &comm;
 
     public:
         /**
@@ -22,7 +22,7 @@ namespace r2d2::robos {
          * This constructor also saves it's pointer in the supplied array
          */
         frame_action_c(base_comm_c &comm, frame_type type, actions_t &actions)
-            : timed_request_c(comm, type) {
+            : comm(comm) {
             actions[type] = this;
         }
         /**
@@ -31,7 +31,7 @@ namespace r2d2::robos {
          */
         frame_action_c(base_comm_c &comm, frame_type type, actions_t &actions,
                        uint32_t timeout)
-            : timed_request_c(comm, type, timeout) {
+            : comm(comm) {
             actions[type] = this;
         }
 

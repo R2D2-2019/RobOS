@@ -30,8 +30,6 @@ namespace r2d2::robos {
             changed = true;
             object_temperature = temperature_frame.object_temperature;
         }
-        // Data recieved, reset timer
-        mark_received();
     }
 
     void temperature_frame_action_c::reply_to_data() {

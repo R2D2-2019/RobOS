@@ -38,8 +38,6 @@ namespace r2d2::robos {
             changed = true;
             distance_mm = distance_frame.mm;
         }
-        // Data recieved, reset timer
-        mark_received();
     }
 
     void distance_frame_action_c::reply_to_data() {

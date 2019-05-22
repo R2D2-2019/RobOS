@@ -37,8 +37,6 @@ namespace r2d2::robos {
             changed = true;
             battery_percentage = battery_frame.percentage;
         }
-        // Data recieved, reset timer
-        mark_received();
     }
 
     void battery_frame_action_c::reply_to_data() {
