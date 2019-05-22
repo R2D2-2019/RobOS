@@ -4,9 +4,6 @@
 #include <hwlib.hpp>
 #include <timed_request.hpp>
 
-// needed for int_to_str
-#include <charconv>
-
 namespace r2d2::robos {
     class frame_action_c : public timed_request_c {
     public:
@@ -18,13 +15,6 @@ namespace r2d2::robos {
         // set to true if the data from the frame is changed since the last call
         // of reply_to_data
         bool changed = false;
-
-        /**
-         * converts an int to a string, stores the string in the supplied char*
-         */
-        void int_to_str(unsigned int i, char *str, unsigned int lenght) {
-            std::to_chars(str, str + lenght, i);
-        }
 
     public:
         /**

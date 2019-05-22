@@ -1,5 +1,7 @@
 #include <battery_frame_action.hpp>
 
+#include <int_to_string.hpp>
+
 namespace r2d2::robos {
     battery_frame_action_c::battery_frame_action_c(base_comm_c &comm,
                                                    actions_t &actions)
@@ -64,7 +66,7 @@ namespace r2d2::robos {
                 display_characters.characters[i] = ' ';
             }
             display_characters.characters[10] = '\0';
-            int_to_str(battery_percentage, display_characters.characters, 3);
+            int_to_str(battery_percentage, display_characters.characters);
             comm.send(cursor_position);
             comm.send(display_characters);
 

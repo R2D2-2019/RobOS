@@ -1,5 +1,7 @@
 #include <distance_frame_action.hpp>
 
+#include <int_to_string.hpp>
+
 namespace r2d2::robos {
     distance_frame_action_c::distance_frame_action_c(base_comm_c &comm,
                                                      actions_t &actions)
@@ -46,7 +48,7 @@ namespace r2d2::robos {
                 display_characters.characters[i] = ' ';
             }
             display_characters.characters[11] = '\0';
-            int_to_str(distance_mm, display_characters.characters, 5);
+            int_to_str(distance_mm, display_characters.characters);
             comm.send(cursor_position);
             comm.send(display_characters);
 
