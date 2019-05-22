@@ -1,9 +1,12 @@
 #pragma once
 
 #include <base_module.hpp>
+#include <hwlib.hpp>
 
 namespace r2d2::test_module {
     class module_c : public base_module_c {
+        hwlib::target::pin_adc adc{hwlib::target::ad_pins::a10};
+
     protected:
     public:
         /**
@@ -30,12 +33,8 @@ namespace r2d2::test_module {
                 }
 
                 frame_battery_level_s battery_level;
-                if (current_value > 1) {
-                    current_value -= 1;
-                    battery_level.percentage = current_value;
-                } else {
-                    current_value = 50;
-                }
+                battery_level.voltage = adc.read() / 6;
+                battery_level.percentage = battery_level.voltage * 2;
 
                 comm.send(battery_level);
             }
