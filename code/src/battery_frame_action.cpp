@@ -3,9 +3,15 @@
 #include <int_to_string.hpp>
 
 namespace r2d2::robos {
+    template <>
+    frame_data_t<battery_frame_action_c::action_type>
+        frame_action_c<battery_frame_action_c::action_type>::last_frame = {};
+    template <>
+    bool frame_action_c<battery_frame_action_c::action_type>::changed = false;
+
     battery_frame_action_c::battery_frame_action_c(base_comm_c &comm,
-                                                   actions_t &actions)
-        : frame_action_c(comm, frame_type::BATTERY_LEVEL, actions) {
+                                                   frame_s &frame)
+        : frame_action_c(comm, frame) {
         static constexpr uint8_t cursor_id =
             static_cast<uint8_t>(claimed_display_cursor::ROBOS_POWER_CURSOR);
         cursor_color.cursor_id = cursor_id;
@@ -31,20 +37,12 @@ namespace r2d2::robos {
         frame.blue = 0;
     }
 
-    void battery_frame_action_c::process_packet(frame_s &frame) {
-        auto battery_frame = frame.as_frame_type<frame_type::BATTERY_LEVEL>();
-        if (battery_percentage != battery_frame.percentage) {
-            changed = true;
-            battery_percentage = battery_frame.percentage;
-        }
-    }
-
     void battery_frame_action_c::reply_to_data() {
         if (changed) {
 
             // If battery percentage is under the 30 percent, make the text red
             // Else make the text green
-            if (battery_percentage < 30) {
+            if (last_frame.percentage < 30) {
                 red_cursor(cursor_color);
             } else {
                 green_cursor(cursor_color);
@@ -64,7 +62,7 @@ namespace r2d2::robos {
                 display_characters.characters[i] = ' ';
             }
             display_characters.characters[10] = '\0';
-            int_to_str(battery_percentage, display_characters.characters);
+            int_to_str(last_frame.percentage, display_characters.characters);
             comm.send(cursor_position);
             comm.send(display_characters);
 

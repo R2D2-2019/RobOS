@@ -3,9 +3,16 @@
 #include <int_to_string.hpp>
 
 namespace r2d2::robos {
+    template <>
+    frame_data_t<temperature_frame_action_c::action_type> frame_action_c<
+        temperature_frame_action_c::action_type>::last_frame = {};
+    template <>
+    bool frame_action_c<temperature_frame_action_c::action_type>::changed =
+        false;
+
     temperature_frame_action_c::temperature_frame_action_c(base_comm_c &comm,
-                                                           actions_t &actions)
-        : frame_action_c(comm, frame_type::TEMPERATURE, actions) {
+                                                           frame_s &frame)
+        : frame_action_c(comm, frame) {
         static constexpr uint8_t cursor_id = static_cast<uint8_t>(
             claimed_display_cursor::ROBOS_TEMPERATURE_CURSOR);
         cursor_color.cursor_id = cursor_id;
@@ -17,19 +24,6 @@ namespace r2d2::robos {
         cursor_color.green = 255;
         cursor_color.blue = 0;
         comm.send(cursor_color);
-    }
-
-    void temperature_frame_action_c::process_packet(frame_s &frame) {
-        auto temperature_frame = frame.as_frame_type<frame_type::TEMPERATURE>();
-        // If the ambient temperature of the object temperature is changed,
-        // mark changed to true and set local values to the received values
-        if (ambient_temperature != temperature_frame.ambient_temperature) {
-            changed = true;
-            ambient_temperature = temperature_frame.ambient_temperature;
-        } else if (object_temperature != temperature_frame.object_temperature) {
-            changed = true;
-            object_temperature = temperature_frame.object_temperature;
-        }
     }
 
     void temperature_frame_action_c::reply_to_data() {
@@ -51,7 +45,8 @@ namespace r2d2::robos {
                 display_characters.characters[i] = ' ';
             }
             display_characters.characters[10] = '\0';
-            int_to_str(object_temperature / 10, display_characters.characters);
+            int_to_str(last_frame.object_temperature / 10,
+                       display_characters.characters);
             comm.send(cursor_position);
             comm.send(display_characters);
             changed = false;
