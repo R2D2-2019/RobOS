@@ -13,15 +13,15 @@ namespace r2d2::robos {
         // of reply_to_data
         base_comm_c &comm;
 
-        static frame_data_t<Type> last_frame;
-        static bool changed;
+        inline static frame_data_t<Type> last_frame = {};
+        inline static bool changed = false;
 
     public:
         static constexpr frame_type action_type = Type;
         /**
          * intitialize the frame action.
-         * This constructor also saves the frame when it is different from the last
-         * frame
+         * This constructor also saves the frame when it is different from the
+         * last frame
          */
         frame_action_c(base_comm_c &comm, frame_s &frame) : comm(comm) {
             auto frame_data = frame.as_frame_type<Type>();

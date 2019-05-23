@@ -1,13 +1,6 @@
 #include <manual_control_frame_action.hpp>
 
 namespace r2d2::robos {
-    template <>
-    frame_data_t<manual_control_frame_action_c::action_type> frame_action_c<
-        manual_control_frame_action_c::action_type>::last_frame = {};
-    template <>
-    bool frame_action_c<manual_control_frame_action_c::action_type>::changed =
-        false;
-
     manual_control_frame_action_c::manual_control_frame_action_c(
         base_comm_c &comm, frame_s &frame)
         : frame_action_c(comm, frame) {

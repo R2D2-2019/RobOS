@@ -3,12 +3,6 @@
 #include <int_to_string.hpp>
 
 namespace r2d2::robos {
-    template <>
-    frame_data_t<battery_frame_action_c::action_type>
-        frame_action_c<battery_frame_action_c::action_type>::last_frame = {};
-    template <>
-    bool frame_action_c<battery_frame_action_c::action_type>::changed = false;
-
     battery_frame_action_c::battery_frame_action_c(base_comm_c &comm,
                                                    frame_s &frame)
         : frame_action_c(comm, frame) {
