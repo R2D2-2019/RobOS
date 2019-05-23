@@ -1,3 +1,5 @@
+#pragma once
+
 namespace r2d2::robos {
 
     /**
