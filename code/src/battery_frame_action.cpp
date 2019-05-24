@@ -32,35 +32,36 @@ namespace r2d2::robos {
     }
 
     void battery_frame_action_c::reply_to_data() {
-        if (changed) {
-
-            // If battery percentage is under the 30 percent, make the text red
-            // Else make the text green
-            if (last_frame.percentage < 30) {
-                red_cursor(cursor_color);
-            } else {
-                green_cursor(cursor_color);
-            }
-            comm.send(cursor_color);
-
-            for (unsigned int i = 0; i < 10; i++) {
-                display_characters.characters[i] = battery_message[i];
-            }
-            display_characters.characters[10] = '\0';
-            cursor_position.cursor_x = 0;
-            comm.send(cursor_position);
-            comm.send(display_characters);
-
-            cursor_position.cursor_x = 100;
-            for (unsigned int i = 0; i < 10; i++) {
-                display_characters.characters[i] = ' ';
-            }
-            display_characters.characters[10] = '\0';
-            int_to_str(last_frame.percentage, display_characters.characters);
-            comm.send(cursor_position);
-            comm.send(display_characters);
-
-            changed = false;
+        if (!changed) {
+            return;
         }
+
+        // If battery percentage is under the 30 percent, make the text red
+        // Else make the text green
+        if (last_frame.percentage < 30) {
+            red_cursor(cursor_color);
+        } else {
+            green_cursor(cursor_color);
+        }
+        comm.send(cursor_color);
+
+        for (unsigned int i = 0; i < 10; i++) {
+            display_characters.characters[i] = battery_message[i];
+        }
+        display_characters.characters[10] = '\0';
+        cursor_position.cursor_x = 0;
+        comm.send(cursor_position);
+        comm.send(display_characters);
+
+        cursor_position.cursor_x = 100;
+        for (unsigned int i = 0; i < 10; i++) {
+            display_characters.characters[i] = ' ';
+        }
+        display_characters.characters[10] = '\0';
+        int_to_str(last_frame.percentage, display_characters.characters);
+        comm.send(cursor_position);
+        comm.send(display_characters);
+
+        changed = false;
     }
 } // namespace r2d2::robos

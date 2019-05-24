@@ -7,16 +7,17 @@ namespace r2d2::robos {
     }
 
     void manual_control_frame_action_c::reply_to_data() {
-        if (changed) {
-            frame_movement_control_s frame;
-
-            frame.brake = last_frame.brake;
-            frame.rotation = last_frame.rotation;
-            frame.speed = last_frame.speed;
-
-            comm.send(frame);
-
-            changed = false;
+        if (!changed) {
+            return;
         }
+        frame_movement_control_s frame;
+
+        frame.brake = last_frame.brake;
+        frame.rotation = last_frame.rotation;
+        frame.speed = last_frame.speed;
+
+        comm.send(frame);
+
+        changed = false;
     }
 } // namespace r2d2::robos

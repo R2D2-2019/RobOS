@@ -33,16 +33,17 @@ namespace r2d2::robos {
     }
 
     void distance_frame_action_c::reply_to_data() {
-        if (changed) {
-            for (unsigned int i = 0; i < 11; i++) {
-                display_characters.characters[i] = ' ';
-            }
-            display_characters.characters[11] = '\0';
-            int_to_str(last_frame.mm, display_characters.characters);
-            comm.send(cursor_position);
-            comm.send(display_characters);
-
-            changed = false;
+        if (!changed) {
+            return;
         }
+        for (unsigned int i = 0; i < 11; i++) {
+            display_characters.characters[i] = ' ';
+        }
+        display_characters.characters[11] = '\0';
+        int_to_str(last_frame.mm, display_characters.characters);
+        comm.send(cursor_position);
+        comm.send(display_characters);
+
+        changed = false;
     }
 } // namespace r2d2::robos

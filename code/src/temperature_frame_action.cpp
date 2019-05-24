@@ -20,29 +20,30 @@ namespace r2d2::robos {
     }
 
     void temperature_frame_action_c::reply_to_data() {
-        if (changed) {
-            // hwlib::cout << "Ambient temp: " << ambient_temperature / 10
-            //            << " Object temp: " << object_temperature / 10 <<
-            //            '\n';
-            for (unsigned int i = 0; i < 11; i++) {
-                display_characters.characters[i] = temperature_message[i];
-            }
-            display_characters.characters[11] = '\0';
-            cursor_position.cursor_x = 0;
-            cursor_position.cursor_y = 3 * 10;
-            comm.send(cursor_position);
-            comm.send(display_characters);
-
-            cursor_position.cursor_x = 100;
-            for (unsigned int i = 0; i < 10; i++) {
-                display_characters.characters[i] = ' ';
-            }
-            display_characters.characters[10] = '\0';
-            int_to_str(last_frame.object_temperature / 10,
-                       display_characters.characters);
-            comm.send(cursor_position);
-            comm.send(display_characters);
-            changed = false;
+        if (!changed) {
+            return;
         }
+        // hwlib::cout << "Ambient temp: " << ambient_temperature / 10
+        //            << " Object temp: " << object_temperature / 10 <<
+        //            '\n';
+        for (unsigned int i = 0; i < 11; i++) {
+            display_characters.characters[i] = temperature_message[i];
+        }
+        display_characters.characters[11] = '\0';
+        cursor_position.cursor_x = 0;
+        cursor_position.cursor_y = 3 * 10;
+        comm.send(cursor_position);
+        comm.send(display_characters);
+
+        cursor_position.cursor_x = 100;
+        for (unsigned int i = 0; i < 10; i++) {
+            display_characters.characters[i] = ' ';
+        }
+        display_characters.characters[10] = '\0';
+        int_to_str(last_frame.object_temperature / 10,
+                   display_characters.characters);
+        comm.send(cursor_position);
+        comm.send(display_characters);
+        changed = false;
     }
 } // namespace r2d2::robos

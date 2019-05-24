@@ -17,6 +17,6 @@ namespace r2d2::robos {
     public:
         temperature_frame_action_c(base_comm_c &comm, frame_s &frame);
 
-        virtual void reply_to_data();
+        virtual void reply_to_data() override;
     }; // class temperature_frame_action_c
 } // namespace r2d2::robos
