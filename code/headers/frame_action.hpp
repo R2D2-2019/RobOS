@@ -14,7 +14,7 @@ namespace r2d2::robos {
         base_comm_c &comm;
 
         inline static frame_data_t<Type> last_frame = {};
-        inline static bool changed = false;
+        bool changed = false;
 
     public:
         static constexpr frame_type action_type = Type;
