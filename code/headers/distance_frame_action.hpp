@@ -8,12 +8,13 @@ namespace r2d2::robos {
     class distance_frame_action_c
         : public frame_action_c<frame_type::DISTANCE> {
     private:
-        display_ostream_c ostream;
+        display_ostream_c &ostream;
 
         static constexpr char distance_message[11] = "Distance: ";
 
     public:
-        distance_frame_action_c(base_comm_c &comm, frame_s &frame);
+        distance_frame_action_c(base_comm_c &comm, frame_s &frame,
+                                display_ostream_c &os);
 
         virtual void reply_to_data() override;
     }; // class distance_frame_action_c

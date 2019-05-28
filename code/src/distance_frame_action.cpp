@@ -2,10 +2,9 @@
 
 namespace r2d2::robos {
     distance_frame_action_c::distance_frame_action_c(base_comm_c &comm,
-                                                     frame_s &frame)
-        : frame_action_c(comm, frame),
-          ostream(comm, claimed_display_cursor::ROBOS_DISTANCE_CURSOR,
-                  {0, 0, 0}, 0, 16) {
+                                                     frame_s &frame,
+                                                     display_ostream_c &os)
+        : frame_action_c(comm, frame), ostream(os) {
     }
 
     void distance_frame_action_c::reply_to_data() {

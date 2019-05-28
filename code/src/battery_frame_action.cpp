@@ -2,10 +2,9 @@
 
 namespace r2d2::robos {
     battery_frame_action_c::battery_frame_action_c(base_comm_c &comm,
-                                                   frame_s &frame)
-        : frame_action_c(comm, frame),
-          ostream(comm, claimed_display_cursor::ROBOS_POWER_CURSOR, {0, 255, 0},
-                  0, 0) {
+                                                   frame_s &frame,
+                                                   display_ostream_c &os)
+        : frame_action_c(comm, frame), ostream(os) {
     }
 
     void battery_frame_action_c::red_cursor() {

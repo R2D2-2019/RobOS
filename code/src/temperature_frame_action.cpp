@@ -1,11 +1,9 @@
 #include <temperature_frame_action.hpp>
 
 namespace r2d2::robos {
-    temperature_frame_action_c::temperature_frame_action_c(base_comm_c &comm,
-                                                           frame_s &frame)
-        : frame_action_c(comm, frame),
-          ostream(comm, claimed_display_cursor::ROBOS_TEMPERATURE_CURSOR,
-                  {0, 0, 0}, 0, 30) {
+    temperature_frame_action_c::temperature_frame_action_c(
+        base_comm_c &comm, frame_s &frame, display_ostream_c &os)
+        : frame_action_c(comm, frame), ostream(os) {
     }
 
     void temperature_frame_action_c::reply_to_data() {

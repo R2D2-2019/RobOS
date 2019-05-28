@@ -15,12 +15,14 @@ namespace r2d2::robos {
         frame_cursor_position_s position_frame;
 
         void send_color() {
-            frame_cursor_color_s frame;
+            frame_cursor_color_s color_frame;
 
-            frame.cursor_id = cursor_id;
-            frame.red = color.red;
-            frame.green = color.green;
-            frame.blue = color.blue;
+            color_frame.cursor_id = cursor_id;
+            color_frame.red = color.red;
+            color_frame.green = color.green;
+            color_frame.blue = color.blue;
+
+            comm.send(color_frame);
         }
 
     public:
@@ -38,8 +40,13 @@ namespace r2d2::robos {
 
             send_color();
         }
-        virtual void flush() override {
 
+        display_ostream_c(base_comm_c &comm, claimed_display_cursor cursor,
+                          uint8_t x, uint8_t y)
+            : display_ostream_c(comm, cursor, {0, 0, 0}, x, y) {
+        }
+
+        virtual void flush() override {
             text_frame.characters[text_index] = '\0';
             comm.send(position_frame);
             comm.send(text_frame);
@@ -47,6 +54,15 @@ namespace r2d2::robos {
         }
 
         virtual void putc(char c) override {
+            if (c == '\0') {
+                // don't need to write '\0'  this will happen automatically in
+                // flush()
+                return;
+            }
+            if (text_index > 247) {
+                // array is full, stop writing
+                return;
+            }
             text_frame.characters[text_index] = c;
             text_index++;
         }

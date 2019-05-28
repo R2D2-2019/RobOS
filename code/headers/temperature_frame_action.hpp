@@ -8,11 +8,12 @@ namespace r2d2::robos {
     class temperature_frame_action_c
         : public frame_action_c<frame_type::TEMPERATURE> {
     private:
-        display_ostream_c ostream;
+        display_ostream_c &ostream;
         static constexpr char temperature_message[11] = "Obj temp: ";
 
     public:
-        temperature_frame_action_c(base_comm_c &comm, frame_s &frame);
+        temperature_frame_action_c(base_comm_c &comm, frame_s &frame,
+                                   display_ostream_c &os);
 
         virtual void reply_to_data() override;
     }; // class temperature_frame_action_c

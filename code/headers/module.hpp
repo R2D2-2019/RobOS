@@ -11,12 +11,13 @@ namespace r2d2::robos {
     class module_c : public base_module_c {
     private:
         std::array<timed_request_c, frame_type::COUNT> requests = {};
+        frame_handler_c handler;
 
     public:
         /**
          * @param comm the communication bus
          */
-        module_c(base_comm_c &comm) : base_module_c(comm) {
+        module_c(base_comm_c &comm) : base_module_c(comm), handler(comm) {
             // Note: module can listen up to 8 frame_types as of now
             comm.listen_for_frames(
                 {frame_type::BATTERY_LEVEL, frame_type::MANUAL_CONTROL,
@@ -48,7 +49,7 @@ namespace r2d2::robos {
 
                 // process the received packet using the appropriate
                 // frame-handler
-                frame_handler_c::process(comm, frame);
+                handler.process(frame);
 
                 // Data recieved, reset timer
                 auto &request = requests[frame.type];
