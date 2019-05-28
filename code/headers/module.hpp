@@ -42,7 +42,7 @@ namespace r2d2::robos {
             // process received frames
             while (comm.has_data()) {
                 auto frame = comm.get_data();
-                // This module doesn't handel requests
+                // This module doesn't handle requests
                 if (frame.request) {
                     continue;
                 }

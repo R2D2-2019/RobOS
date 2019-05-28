@@ -9,11 +9,11 @@ namespace r2d2::robos {
     template <frame_type Type>
     class frame_action_c {
     protected:
-        // set to true if the data from the frame is changed since the last call
-        // of reply_to_data
         base_comm_c &comm;
 
         inline static frame_data_t<Type> last_frame = {};
+        // set to true if the data from the frame is changed since the last call
+        // of reply_to_data
         bool changed = false;
 
     public:

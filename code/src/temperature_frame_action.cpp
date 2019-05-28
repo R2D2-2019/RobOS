@@ -10,9 +10,6 @@ namespace r2d2::robos {
         if (!changed) {
             return;
         }
-        // hwlib::cout << "Ambient temp: " << ambient_temperature / 10
-        //            << " Object temp: " << object_temperature / 10 <<
-        //            '\n';
         ostream << temperature_message << (last_frame.object_temperature / 10)
                 << hwlib::flush;
 

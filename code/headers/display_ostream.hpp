@@ -66,13 +66,13 @@ namespace r2d2::robos {
             text_frame.characters[text_index] = c;
             text_index++;
         }
-        /// set the color to x
-        const void set_color(hwlib::color x) {
-            if (color == x) {
+        /// set the color to new_color
+        const void set_color(hwlib::color new_color) {
+            if (color == new_color) {
                 // no need to send frame
                 return;
             }
-            color = x;
+            color = new_color;
             send_color();
         }
         /// return the current color
