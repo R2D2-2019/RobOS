@@ -17,7 +17,9 @@ namespace r2d2::robos_core{
 		robos_state state;
 	public:
 		void process() override;
-		robos_core_c(base_comm_c &comm);
+		robos_core_c(base_comm_c &comm) : base_module_c(comm){
+			comm.configure(r2d2::frame_type::ALL);
+		}
 		int get_identity_packets();
 		int run();
 		int wait_command();
