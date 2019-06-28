@@ -23,7 +23,7 @@ namespace r2d2::robos {
               manual_control_request_steer(
                   comm, frame_type::MANUAL_CONTROL_JOYSTICK) {
             comm.listen_for_frames({frame_type::MANUAL_CONTROL_SLIDER,
-                                    frame_type::manual_control_request_steer});
+                                    frame_type::MANUAL_CONTROL_JOYSTICK});
         }
 
         void process_movement_control_speed(frame_s frame) {
@@ -34,14 +34,22 @@ namespace r2d2::robos {
             // slider id 0 is left peddel and slider id 1 is right peddel
             if (data.slider_id == 0) {
                 brake = true;
+                speed = 0;
             } else {
                 brake = false;
                 speed = data.value;
             }
             // send frame to moving platform
+            frame_movement_control_s movement;
+
+            movement.brake = brake;
+            movement.rotation = steering_angle;
+            movement.speed = speed;
+
+            comm.send(movement);
 
             // Data recieved, reset timer
-            manual_control_request.mark_received();
+            manual_control_request_speed.mark_received();
         }
 
         void process_movement_control_steer(frame_s frame) {
@@ -50,17 +58,26 @@ namespace r2d2::robos {
 
             // convert to moving platform
             steering_angle = data.value_x;
+
             // send frame to moving platform
+            frame_movement_control_s movement;
+
+            movement.brake = brake;
+            movement.rotation = steering_angle;
+            movement.speed = speed;
+
+            comm.send(movement);
 
             // Data recieved, reset timer
-            manual_control_request.mark_received();
+            manual_control_request_steer.mark_received();
         }
         /**
          * Let the module process data
          */
         void process() override {
             // Set out all polling requests
-            manual_control_request.process();
+            manual_control_request_speed.process();
+            manual_control_request_steer.process();
 
             while (comm.has_data()) {
                 auto frame = comm.get_data();
@@ -73,8 +90,10 @@ namespace r2d2::robos {
                 // Process the frame
                 switch (frame.type) {
                 case frame_type::MANUAL_CONTROL_SLIDER:
-                    process_movement_control(frame);
+                    process_movement_control_speed(frame);
                     break;
+                case frame_type::MANUAL_CONTROL_JOYSTICK:
+                    process_movement_control_steer(frame);
                 default:
                     break;
                 }
