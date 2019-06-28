@@ -2,12 +2,15 @@
 
 #include <stdint.h>
 #include <vector>
-#include <frame_action.hpp>
+#include <frame_types.hpp>
 
 namespace r2d2::robos {
     class robos_role {
+    private:
+        std::vector<frame_type> modules;
+        std::vector<frame_type> packets; 
     public:
-        robos_role(std::vector<frame_type> &frames);
+        robos_role(){};
         virtual char *get_role_name() = 0;
         virtual std::vector<frame_type> get_required_modules();
         virtual std::vector<frame_type> get_required_packets();
