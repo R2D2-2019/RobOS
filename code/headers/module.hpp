@@ -8,10 +8,12 @@ namespace r2d2::robos {
     private:
         timed_request_c manual_control_request_speed;
         timed_request_c manual_control_request_steer;
+        timed_request_c manual_control_request_direction;
         int8_t speed = 0;
         int8_t steering_angle = 0;
         bool brake = false;
         bool flag_for_send = 0;
+        bool forward = true;
 
     public:
         /**
@@ -21,15 +23,20 @@ namespace r2d2::robos {
             : base_module_c(comm),
               manual_control_request_speed(comm,
                                            frame_type::MANUAL_CONTROL_SLIDER),
-              manual_control_request_steer(
-                  comm, frame_type::MANUAL_CONTROL_JOYSTICK) {
+              manual_control_request_steer(comm,
+                                           frame_type::MANUAL_CONTROL_JOYSTICK),
+              manual_control_request_direction(
+                  comm, frame_type::MANUAL_CONTROL_BUTTON) {
             comm.listen_for_frames({frame_type::MANUAL_CONTROL_SLIDER,
-                                    frame_type::MANUAL_CONTROL_JOYSTICK});
+                                    frame_type::MANUAL_CONTROL_JOYSTICK,
+                                    frame_type::MANUAL_CONTROL_BUTTON});
         }
 
         void process_movement_control_speed(const frame_s &frame);
 
         void process_movement_control_steer(const frame_s &frame);
+
+        void process_movement_control_direction(const frame_s &frame);
 
         /**
          * Let the module process data

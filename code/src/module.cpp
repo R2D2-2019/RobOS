@@ -12,7 +12,11 @@ namespace r2d2::robos {
             speed = 0;
         } else {
             brake = false;
-            speed = data.value;
+            if (forward == true) {
+                speed = data.value;
+            } else {
+                speed = -data.value;
+            }
         }
         flag_for_send = 1;
         // Data recieved, reset timer
@@ -28,6 +32,18 @@ namespace r2d2::robos {
         // Data recieved, reset timer
         manual_control_request_steer.mark_received();
     }
+
+    void module_c::process_movement_control_direction(const frame_s &frame) {
+        auto data = frame.as_frame_type<frame_type::MANUAL_CONTROL_BUTTON>();
+        hwlib::cout << " button pressed: " << data.button_id << "\n";
+        if (data.button_id == 0 && data.value == true) {
+            forward = true;
+        } else if (data.button_id == 3 && data.value == true) {
+            forward = false;
+        }
+
+        manual_control_request_direction.mark_received();
+    }
     /**
      * Let the module process data
      */
@@ -35,6 +51,7 @@ namespace r2d2::robos {
         // Set out all polling requests
         comm.request(frame_type::MANUAL_CONTROL_SLIDER);
         comm.request(frame_type::MANUAL_CONTROL_JOYSTICK);
+        comm.request(frame_type::MANUAL_CONTROL_BUTTON);
 
         while (comm.has_data()) {
             auto frame = comm.get_data();
@@ -51,6 +68,9 @@ namespace r2d2::robos {
                 break;
             case frame_type::MANUAL_CONTROL_JOYSTICK:
                 process_movement_control_steer(frame);
+                break;
+            case frame_type::MANUAL_CONTROL_BUTTON:
+                process_movement_control_direction(frame);
                 break;
             default:
                 break;
