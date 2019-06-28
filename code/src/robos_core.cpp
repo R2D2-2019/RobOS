@@ -5,24 +5,22 @@ namespace r2d2::robos_core{
 		//connect with server here? or in an init function?
 	};
 	
-	void robos_core_c::process(){}
-	
-	int robos_core_c::run(){
+	void robos_core_c::process(){
 		bool end = false;
-		int x = 1;
+		int error_code;
 		while(!end){
 			switch(robos_core_c::state){
-				case wait : x = robos_core_c::wait_command();
+				case wait : error_code = robos_core_c::wait_command();
 					break;
-				case initrole : robos_core_c::init_role();
+				case initrole : error_code = robos_core_c::init_role();
 					break;
-				case runrole : robos_core_c::run_role();
+				case runrole : error_code = robos_core_c::run_role();
 					break;
-				case shutdown : robos_core_c::shutdown_robos();
+				case shutdown : error_code = robos_core_c::shutdown_robos();
 					end = true;
 			}
+			end = true;
 		}
-		return 0;
 	};
 	
 	int robos_core_c::wait_command(){return 0;};
