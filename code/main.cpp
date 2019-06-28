@@ -3,7 +3,6 @@
 #include <hwlib.hpp>
 
 #include <comm.hpp>
-// #include <led_module.hpp>
 #include <module.hpp>
 
 int main(void) {
