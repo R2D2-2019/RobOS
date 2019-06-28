@@ -7,9 +7,6 @@ namespace r2d2::robos {
 
         // convert to moving platform
         // slider id 0 is left peddel and slider id 1 is right peddel
-
-        hwlib::cout << "Slider_id: " << data.slider_id << "\n";
-        hwlib::cout << "Value: " << data.value << "\n";
         if (data.slider_id == 0) {
             brake = true;
             speed = 0;
@@ -36,8 +33,6 @@ namespace r2d2::robos {
      */
     void module_c::process() {
         // Set out all polling requests
-        // manual_control_request_speed.process();
-        // manual_control_request_steer.process();
         comm.request(frame_type::MANUAL_CONTROL_SLIDER);
         comm.request(frame_type::MANUAL_CONTROL_JOYSTICK);
 
@@ -52,11 +47,9 @@ namespace r2d2::robos {
             // Process the frame
             switch (frame.type) {
             case frame_type::MANUAL_CONTROL_SLIDER:
-                // hwlib::cout << "manual slider\n";
                 process_movement_control_speed(frame);
                 break;
             case frame_type::MANUAL_CONTROL_JOYSTICK:
-                // hwlib::cout << "manual steer\n";
                 process_movement_control_steer(frame);
                 break;
             default:
