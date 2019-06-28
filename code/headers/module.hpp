@@ -6,9 +6,10 @@
 namespace r2d2::robos {
     class module_c : public base_module_c {
     private:
-        timed_request_c battery_request;
-        timed_request_c manual_control_request;
-        timed_request_c distance_sensor_request;
+        timed_request_c flame_sensor_request;
+		int flame_angle;
+        bool fire_detected;
+        bool big_fire;
 
     public:
         /**
@@ -16,38 +17,22 @@ namespace r2d2::robos {
          */
         module_c(base_comm_c &comm)
             : base_module_c(comm),
-              battery_request(comm, frame_type::BATTERY_LEVEL),
-              manual_control_request(comm, frame_type::MOVEMENT_CONTROL),
-              distance_sensor_request(comm, frame_type::DISTANCE) {
-            comm.listen_for_frames({frame_type::BATTERY_LEVEL,
-                                    frame_type::MOVEMENT_CONTROL,
-                                    frame_type::DISTANCE});
+              flame_sensor_request(comm, frame_type::FLAME_DETECTION) {
+            comm.listen_for_frames({frame_type::FLAME_DETECTION});
         }
+		/**
+		 * Module to process data from the flame sensor
+		 */
+        void process_flame_sensor(frame_s frame) {
+        	auto data =  frame.as_frame_type<frame_type::FLAME_DETECTION>();
 
-        void process_battery_level(frame_s frame) {
-            // Create object to read battery struct data
-            auto battery_percentage =
-                frame.as_frame_type<frame_type::BATTERY_LEVEL>().percentage;
+        	flame_angle = data.flame_angle;
+        	fire_detected = data.flame_detected;
+        	big_fire = data.big_fire;
 
-            hwlib::cout << "battery percentage: "
-                        << static_cast<int>(battery_percentage) << "%"
-                        << hwlib::endl;
-            // Data recieved, reset timer
-            battery_request.mark_received();
-        }
+			hwlib::cout << "fire detected: " << fire_detected << "   big fire: " << big_fire << "   flame angle: " << flame_angle << hwlib::endl;
 
-        void process_distance(frame_s frame) {
-            auto distance_frame = frame.as_frame_type<frame_type::DISTANCE>();
-
-            // Data recieved, reset timer
-            distance_sensor_request.mark_received();
-        }
-        void process_movement_control(frame_s frame) {
-            auto distance_frame =
-                frame.as_frame_type<frame_type::MOVEMENT_CONTROL>();
-
-            // Data recieved, reset timer
-            manual_control_request.mark_received();
+        	flame_sensor_request.mark_received();
         }
 
         /**
@@ -55,9 +40,7 @@ namespace r2d2::robos {
          */
         void process() override {
             // Set out all polling requests
-            battery_request.process();
-            manual_control_request.process();
-            distance_sensor_request.process();
+            flame_sensor_request.process();
 
             while (comm.has_data()) {
                 auto frame = comm.get_data();
@@ -69,14 +52,9 @@ namespace r2d2::robos {
 
                 // Process the frame
                 switch (frame.type) {
-                case frame_type::BATTERY_LEVEL:
-                    process_battery_level(frame);
-                    break;
-                case frame_type::DISTANCE:
-                    process_distance(frame);
-                    break;
-                case frame_type::MOVEMENT_CONTROL:
-                    process_movement_control(frame);
+
+                case frame_type::FLAME_DETECTION:
+                    process_flame_sensor(frame);
                     break;
                 default:
                     break;
