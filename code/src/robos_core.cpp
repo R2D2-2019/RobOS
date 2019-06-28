@@ -1,9 +1,10 @@
 #include <robos_core.hpp>
 
 namespace r2d2::robos_core{
-	robos_core_c::robos_core_c(base_comm_c &comm) : base_module_c(comm){
-		//connect with server here? or in an init function?
-	};
+	robos_core_c::robos_core_c(base_comm_c &comm)
+        : base_module_c(comm) {
+        comm.listen_for_frames({r2d2::frame_type::ALL});
+    }
 	
 	void robos_core_c::process(){
 		bool end = false;
