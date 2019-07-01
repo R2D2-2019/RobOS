@@ -3,7 +3,7 @@
 namespace r2d2::robos_core{
 	robos_core_c::robos_core_c(base_comm_c &comm)
         : base_module_c(comm) {
-        comm.configure(r2d2::modules::NONE, {r2d2::frame_type::ALL});
+        comm.configure(r2d2::module::NONE, {r2d2::frame_type::ALL});
     }
 	
 	void robos_core_c::process(){
