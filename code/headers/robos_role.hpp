@@ -7,7 +7,7 @@
 namespace r2d2::robos {
 
     class robos_role_c {
-    private:
+    protected:
         std::vector<frame_type> modules;
         std::vector<frame_type> packets;
 
@@ -59,7 +59,7 @@ namespace r2d2::robos {
          * This function must be overridden by the child class
          * of the abstract class robos_role_c.
          */
-        virtual uint8_t run(std::vector<frame_type> &frames) = 0;
+        virtual uint8_t run(const std::vector<frame_type> &frames) = 0;
 
         /**
          * @brief
