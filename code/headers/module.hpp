@@ -41,13 +41,9 @@ namespace r2d2::robos {
                 prev_big_fire = data.big_fire;
             }
 
-            hwlib::cout << "fire detected: " << prev_fire_detected
-                        << "   big fire: " << prev_big_fire
-                        << "   flame angle: " << prev_flame_angle << hwlib::endl;
-
             if (prev_fire_detected && !prev_big_fire) {
                 movement.brake = false;
-                movement.rotation = prev_flame_angle;
+                movement.rotation = (prev_flame_angle*90 / 60);
                 movement.speed = 20;
             } else {
                 movement.brake = true;
