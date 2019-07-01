@@ -7,7 +7,7 @@
 namespace r2d2::robos {
 
     class robos_role_c {
-    private:
+    protected:
         std::vector<frame_type> modules;
         std::vector<frame_type> packets;
 
