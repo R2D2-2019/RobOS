@@ -7,6 +7,7 @@ namespace r2d2::robos_core{
 		wait,
 		initrole,
 		runrole,
+		updatemodules,
 		shutdown
 	};
 
@@ -23,6 +24,7 @@ namespace r2d2::robos_core{
 		int wait_command();
 		int init_role();
 		int run_role();
+		int update_modules();
 		int shutdown_robos();
 		
 		
