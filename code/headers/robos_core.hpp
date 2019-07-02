@@ -19,6 +19,7 @@ namespace r2d2::robos {
         uint_fast16_t id;
         r2d2::module mod_list[20];
         robos_state state;
+        robos_roles role;
         robos_role_c *current_role;
         r2d2::communication::esp_32_c &esp;
         std::array<timed_request_c, frame_type::COUNT> requests = {};
