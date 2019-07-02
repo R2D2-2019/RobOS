@@ -7,6 +7,7 @@
 #include <ringbuffer.hpp>
 #include <robos_role.hpp>
 #include <timed_request.hpp>
+
 #include <robos_enums.hpp>
 
 namespace r2d2::robos {

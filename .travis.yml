@@ -32,8 +32,9 @@ cache:
     - $HOME/arm-none-eabi
 
 install:
-  # clone git repo to the $HOME folder
+  # clone git repo to the $HOME folder and init the communucation library
   - git clone --recursive -j8  https://github.com/R2D2-2019/R2D2-build.git $HOME/r2d2
+  - git clone --recursive -j8  https://github.com/R2D2-2019/communication.git $HOME/communication
   
   # make installer executable
   - chmod +x $HOME/r2d2/programs/travis-ci/install_arm-eabi-gcc.sh
@@ -57,6 +58,7 @@ jobs:
     - script:
       # copy the currently building repo into a build_module
       - cp -r $TRAVIS_BUILD_DIR $HOME/r2d2/modules/build_module
+      - cp -r $HOME/communication $HOME/r2d2/libraries/communication
 
       # go into the modules folder of the build system
       - cd $HOME/r2d2/modules/build_module/test
@@ -69,6 +71,7 @@ jobs:
     - script:
       # copy the currently building repo into a build_module
       - cp -r $TRAVIS_BUILD_DIR $HOME/r2d2/modules/build_module
+      - cp -r $HOME/communication $HOME/r2d2/libraries/communication
 
       # go into the modules folder of the build system
       - cd $HOME/r2d2/modules/build_module/code

@@ -40,6 +40,7 @@ namespace r2d2::robos {
             }
 
             switch (robos_core_c::state) {
+
             case robos_state::WAIT:
                 error_code = robos_core_c::wait_command();
                 break;
@@ -62,6 +63,7 @@ namespace r2d2::robos {
 
     int robos_core_c::wait_command() {
         robos_core_c::state = robos_state::INITROLE;
+
         // potentially choose role here
         return 0;
     };
@@ -88,11 +90,12 @@ namespace r2d2::robos {
     int robos_core_c::run_role() {
        // const std::vector<frame_type> test_frame;
        // robos_core_c::current_role->run(test_frame);
+
         // ringbuffer_c robos_core_c::current_role->getoutgoingframes();
         ringbuffer_c<frame_s, 32> ringbuffer;
         while (!ringbuffer.empty()) {
             auto frame = ringbuffer.copy_and_pop();
-            comm.send(frame);
+            // comm.send(frame);
         }
         return 0;
     };

@@ -17,4 +17,3 @@ HEAP              ?= BMPTK
 
 # defer to the Makefile.link
 include           $(RELATIVE)/Makefile.link
-
