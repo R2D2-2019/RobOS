@@ -9,8 +9,8 @@ namespace r2d2::robos {
 
     class robos_role_c {
     protected:
-        std::vector<r2d2::module> modules;
-        std::vector<frame_type> packets;
+        std::array<r2d2::module, 10> modules;
+        std::array<frame_type, 10> packets;
         robos_core_c & core;
 
     public:
@@ -20,7 +20,7 @@ namespace r2d2::robos {
          *
          * The default constructor is empty.
          */
-        robos_role_c(){};
+        robos_role_c();
 
         /**
          * @brief
@@ -38,7 +38,7 @@ namespace r2d2::robos {
          * This function returns the modules that are required
          * to process this role in the run function.
          */
-        virtual std::vector<r2d2::module> get_required_modules();
+        virtual std::array<r2d2::module, 10> get_required_modules();
 
         /**
          * @brief
@@ -47,7 +47,7 @@ namespace r2d2::robos {
          * This function returns the packets that are required
          * to process this role in the run function.
          */
-        virtual std::vector<frame_type> get_required_packets();
+        virtual std::array<frame_type, 10> get_required_packets();
 
         /**
          * @brief
@@ -61,7 +61,7 @@ namespace r2d2::robos {
          * This function must be overridden by the child class
          * of the abstract class robos_role_c.
          */
-        virtual uint8_t run(const std::vector<frame_type> &frames) = 0;
+        virtual uint8_t run(const std::array<frame_type, 10> &frames) = 0;
 
         /**
          * @brief
