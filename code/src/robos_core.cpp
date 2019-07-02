@@ -47,20 +47,37 @@ namespace r2d2::robos {
             // robos_core_c::robos role = moving_platform;
             break;
         case EXAMPLE_ROLE:
+            // auto moving_platform_role = robos_role_c();
+            // robos_core_c::robos role = moving_platform;
             break;
         }
+
         return 0;
     };
 
     int robos_core_c::run_role() {
+        // robos_core_c::current_role->run();
         return 0;
     };
 
     int robos_core_c::shutdown_robos() {
+        robos_core_c::current_role->cleanup();
         return 0;
     };
 
     int robos_core_c::update_modules() {
+        // auto ringbuffer = ringbuffer_c();
+        comm.request(IDENTITY);
+        hwlib::wait_ms(1000);
+        int mod_list_counter = 0;
+        while (comm.has_data()) {
+            auto frame = comm.get_data();
+            if (frame.type == IDENTITY) {
+                mod_list[mod_list_counter] = frame.type;
+            } else {
+            }
+            mod_list_counter += 1;
+        }
         return 0;
     };
 
