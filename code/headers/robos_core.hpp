@@ -14,7 +14,7 @@ namespace r2d2::robos {
     class robos_core_c : public base_module_c {
     private:
         uint_fast16_t id;
-        int mod_list[20];
+        r2d2::module mod_list[20];
         robos_state state;
         robos_roles role;
         robos_role_c *current_role;
