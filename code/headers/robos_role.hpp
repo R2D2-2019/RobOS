@@ -1,6 +1,7 @@
 #pragma once
 
 #include <frame_types.hpp>
+#include <robos_core.hpp>
 #include <stdint.h>
 #include <vector>
 
@@ -8,8 +9,9 @@ namespace r2d2::robos {
 
     class robos_role_c {
     protected:
-        std::vector<frame_type> modules;
+        std::vector<r2d2::module> modules;
         std::vector<frame_type> packets;
+        robos_core_c & core;
 
     public:
         /**
@@ -27,7 +29,7 @@ namespace r2d2::robos {
          * This must be overridden by the child class
          * of the abstract class robos_role_c.
          */
-        virtual char *get_role_name() = 0;
+        robos_core::robos_roles get_role_name() = 0;
 
         /**
          * @brief
@@ -36,7 +38,7 @@ namespace r2d2::robos {
          * This function returns the modules that are required
          * to process this role in the run function.
          */
-        virtual std::vector<frame_type> get_required_modules();
+        virtual std::vector<r2d2::module> get_required_modules();
 
         /**
          * @brief
