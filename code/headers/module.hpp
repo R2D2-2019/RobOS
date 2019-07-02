@@ -1,11 +1,9 @@
 #pragma once
 
-#include <frame_handler.hpp>
-
-#include <base_module.hpp>
-#include <timed_request.hpp>
-
 #include <array>
+#include <base_module.hpp>
+#include <frame_handler.hpp>
+#include <timed_request.hpp>
 
 namespace r2d2::robos {
     class module_c : public base_module_c {
@@ -19,9 +17,7 @@ namespace r2d2::robos {
          */
         module_c(base_comm_c &comm) : base_module_c(comm), handler(comm) {
             // Note: module can listen up to 8 frame_types as of now
-            comm.listen_for_frames(
-                {frame_type::BATTERY_LEVEL, frame_type::MANUAL_CONTROL,
-                 frame_type::DISTANCE, frame_type::TEMPERATURE});
+            comm.listen_for_frames({frame_type::ALL});
 
             for (const uint8_t type : comm.get_accepted_frame_types()) {
                 requests[type] = {&comm, static_cast<frame_type>(type)};
