@@ -1,23 +1,24 @@
 #pragma once
 
-#include <frame_handler.hpp>
-
-#include <base_module.hpp>
-#include <timed_request.hpp>
-
 #include <array>
+#include <base_module.hpp>
+#include <esp_32.hpp>
+#include <frame_handler.hpp>
+#include <timed_request.hpp>
 
 namespace r2d2::robos {
     class module_c : public base_module_c {
     private:
         std::array<timed_request_c, frame_type::COUNT> requests = {};
         frame_handler_c handler;
+        r2d2::communication::esp_32_c &esp;
 
     public:
         /**
          * @param comm the communication bus
          */
-        module_c(base_comm_c &comm) : base_module_c(comm), handler(comm) {
+        module_c(base_comm_c &comm, r2d2::communication::esp_32_c &esp)
+            : base_module_c(comm), handler(comm), esp(esp) {
             // Note: module can listen up to 8 frame_types as of now
             comm.listen_for_frames(
                 {frame_type::BATTERY_LEVEL, frame_type::MANUAL_CONTROL,
