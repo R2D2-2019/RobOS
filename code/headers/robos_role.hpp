@@ -3,7 +3,6 @@
 #include <frame_types.hpp>
 #include <robos_core.hpp>
 #include <stdint.h>
-#include <vector>
 
 namespace r2d2::robos {
 
@@ -11,7 +10,7 @@ namespace r2d2::robos {
     protected:
         std::array<r2d2::module, 10> modules;
         std::array<frame_type, 10> packets;
-        robos_core_c & core;
+        std::array<frame_type, 10> outgoing_frame_data;
 
     public:
         /**
@@ -29,11 +28,19 @@ namespace r2d2::robos {
          * This must be overridden by the child class
          * of the abstract class robos_role_c.
          */
-        robos_core::robos_roles get_role_name() = 0;
+        virtual r2d2::robos::robos_roles get_role_name() = 0;
 
         /**
          * @brief
-         * This function returns a vector of the needed modules
+         * This function returns an array of the needed modules
+         * @detail
+         * This function returns all the frames that need to be send on the can bus.
+         */
+        virtual std::array<r2d2::frame_type, 10> get_outgoing_frames();
+
+        /**
+         * @brief
+         * This function returns an array of the needed modules
          * @detail
          * This function returns the modules that are required
          * to process this role in the run function.
@@ -42,7 +49,7 @@ namespace r2d2::robos {
 
         /**
          * @brief
-         * This function returns a vector of the needed packets
+         * This function returns an array of the needed packets
          * @detail
          * This function returns the packets that are required
          * to process this role in the run function.
@@ -53,7 +60,7 @@ namespace r2d2::robos {
          * @brief
          * This function handles the tasks of the role.
          *
-         * @param std::vector<frame_type>: frames
+         * @param std::array<frame_type, 10>: frames
          * The required frames to process this role.
          * @detail
          * This function will receive data of certain modules and
