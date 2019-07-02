@@ -1,8 +1,7 @@
 #include <hwlib.hpp>
 
 #include <comm.hpp>
-#include <module.hpp>
-#include <test_module.hpp>
+#include <robos_core.hpp>
 
 int main(void) {
     // kill the watchdog
@@ -18,14 +17,10 @@ int main(void) {
 
     auto esp = r2d2::communication::esp_32_c(spi_bus, ss, hs);
     r2d2::comm_c comm;
-    auto robos = r2d2::robos::module_c(comm, esp);
+    auto robos = r2d2::robos::robos_core_c(comm, esp);
 
-    r2d2::comm_c comm2;
-    auto power = r2d2::test_module::module_c(comm2);
-
-    for (;;) {
+    while (true) {
         robos.process();
-        power.process();
         hwlib::wait_ms(150);
     }
 }

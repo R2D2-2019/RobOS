@@ -1,7 +1,10 @@
 #pragma once
 #include <base_module.hpp>
+#include <esp_32.hpp>
+#include <frame_handler.hpp>
 #include <frame_types.hpp>
 #include <robos_role.hpp>
+#include <timed_request.hpp>
 
 namespace r2d2::robos {
 
@@ -16,11 +19,13 @@ namespace r2d2::robos {
         robos_state state = WAIT;
         robos_roles role = MANUAL_CONTROL;
         robos_role_c *robos_role;
+        r2d2::communication::esp_32_c &esp;
+        std::array<timed_request_c, frame_type::COUNT> requests = {};
 
     public:
+        robos_core_c(base_comm_c &comm, r2d2::communication::esp_32_c &esp);
         std::vector<frame_type> outgoing_frame_buffer;
         void process() override;
-        robos_core_c(base_comm_c &comm);
         int get_identity_packets();
         int run();
         int wait_command();
