@@ -99,6 +99,19 @@ namespace r2d2::robos {
                 comm.send(frame);
             }
         }
+
+        r2d2::frame_external_s recv_external_frame;
+        bool recv = esp.receive(recv_external_frame);
+
+        if (recv) {
+            frame_s nframe;
+            nframe.data = recv_external_frame.data;
+            nframe.length = recv_external_frame.length;
+            nframe.type = recv_external_frame.type;
+            nframe.request = false;
+            ringbuffer.push(nframe);
+        }
+
         return 0;
     };
 
