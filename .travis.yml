@@ -32,8 +32,9 @@ cache:
     - $HOME/arm-none-eabi
 
 install:
-  # clone git repo to the $HOME folder
+  # clone git repo to the $HOME folder and init the communucation library
   - git clone --recursive -j8  https://github.com/R2D2-2019/R2D2-build.git $HOME/r2d2
+  - git clone -j8  https://github.com/R2D2-2019/communication.git $HOME/r2d2/libraries
   
   # make installer executable
   - chmod +x $HOME/r2d2/programs/travis-ci/install_arm-eabi-gcc.sh
