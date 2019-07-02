@@ -86,13 +86,13 @@ namespace r2d2::robos {
     };
 
     int robos_core_c::run_role() {
-        const std::vector<frame_type> test_frame;
-        robos_core_c::current_role->run(test_frame);
+        // const std::vector<frame_type> test_frame;
+        // robos_core_c::current_role->run(test_frame);
         // ringbuffer_c robos_core_c::current_role->getoutgoingframes();
         ringbuffer_c<frame_s, 32> ringbuffer;
         while (!ringbuffer.empty()) {
             auto frame = ringbuffer.copy_and_pop();
-            comm.send(frame);
+            // comm.send(frame);
         }
         return 0;
     };
