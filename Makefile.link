@@ -16,6 +16,10 @@ SEARCH            += ../../../libraries/Catch2/single_include/catch2
 internal_comm 	  ?= ../../../libraries/internal_communication
 include 		  $(internal_comm)/Makefile.inc
 
+#add external communication
+external_comm        ?= ../../../libraries/communication
+include              $(external_comm)/Makefile.inc
+
 # add hwlib
 HWLIB             ?= ../../../libraries/hwlib
 include           $(HWLIB)/Makefile.inc

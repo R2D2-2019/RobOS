@@ -1,14 +1,44 @@
 #include <robos_core.hpp>
 
 namespace r2d2::robos {
-    robos_core_c::robos_core_c(base_comm_c &comm) : base_module_c(comm) {
+    robos_core_c::robos_core_c(base_comm_c &comm,
+                               r2d2::communication::esp_32_c &esp)
+        : base_module_c(comm), esp(esp) {
         comm.configure(r2d2::module::NONE, {r2d2::frame_type::ALL});
     }
 
     void robos_core_c::process() {
         bool end = false;
         int error_code;
+
         while (!end) {
+            // esp comes here
+            // Set out all polling requests
+            for (auto &request : requests) {
+                if (request.get_type() != frame_type::NONE) {
+                    request.request_packet();
+                }
+            }
+
+            // process received frames
+            while (comm.has_data()) {
+                auto frame = comm.get_data();
+                // This module doesn't handle requests
+                if (frame.request) {
+                    continue;
+                }
+
+                // process the received packet using the appropriate
+                // frame-handler
+                // handler.process(frame);
+
+                // Data recieved, reset timer
+                auto &request = requests[frame.type];
+                if (request.get_type() != frame_type::NONE) {
+                    request.mark_received();
+                }
+            }
+
             switch (robos_core_c::state) {
             case WAIT:
                 error_code = robos_core_c::wait_command();
