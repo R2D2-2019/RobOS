@@ -8,11 +8,9 @@
 #include <robos_role.hpp>
 #include <timed_request.hpp>
 
+#include <robos_enums.hpp>
+
 namespace r2d2::robos {
-
-    enum robos_state { WAIT, INITROLE, RUNROLE, UPDATEMODULES, SHUTDOWN };
-
-    enum robos_roles { MANUAL_CONTROL, MOVING_PLATFORM, EXAMPLE_ROLE };
 
     class robos_core_c : public base_module_c {
     private:
@@ -26,7 +24,7 @@ namespace r2d2::robos {
 
     public:
         robos_core_c(base_comm_c &comm, r2d2::communication::esp_32_c &esp);
-        std::vector<frame_type> outgoing_frame_buffer;
+        //std::vector<frame_type> outgoing_frame_buffer;
         void process() override;
         int get_identity_packets();
         int run();
