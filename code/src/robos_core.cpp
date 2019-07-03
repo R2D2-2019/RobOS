@@ -40,19 +40,20 @@ namespace r2d2::robos {
             }
 
             switch (robos_core_c::state) {
-            case WAIT:
+
+            case robos_state::WAIT:
                 error_code = robos_core_c::wait_command();
                 break;
-            case INITROLE:
+            case robos_state::INITROLE:
                 error_code = robos_core_c::init_role();
                 break;
-            case RUNROLE:
+            case robos_state::RUNROLE:
                 error_code = robos_core_c::run_role();
                 break;
-            case UPDATEMODULES:
+            case robos_state::UPDATEMODULES:
                 error_code = robos_core_c::update_modules();
                 break;
-            case SHUTDOWN:
+            case robos_state::SHUTDOWN:
                 error_code = robos_core_c::shutdown_robos();
                 end = true;
             }
@@ -61,22 +62,23 @@ namespace r2d2::robos {
     };
 
     int robos_core_c::wait_command() {
-        robos_core_c::state = INITROLE;
+        robos_core_c::state = robos_state::INITROLE;
+
         // potentially choose role here
         return 0;
     };
 
     int robos_core_c::init_role() {
         switch (robos_core_c::role) {
-        case MANUAL_CONTROL:
+        case robos_roles::MANUAL_CONTROL:
             // auto manual_control_role = robos_role_c();
             // robos_core_c::robos role = manual_control_role;
             break;
-        case MOVING_PLATFORM:
+        case robos_roles::MOVING_PLATFORM:
             // auto moving_platform_role = robos_role_c();
             // robos_core_c::robos role = moving_platform;
             break;
-        case EXAMPLE_ROLE:
+        case robos_roles::EXAMPLE_ROLE:
             // auto moving_platform_role = robos_role_c();
             // robos_core_c::robos role = moving_platform;
             break;
@@ -86,14 +88,33 @@ namespace r2d2::robos {
     };
 
     int robos_core_c::run_role() {
-        // const std::vector<frame_type> test_frame;
-        // robos_core_c::current_role->run(test_frame);
+       // const std::vector<frame_type> test_frame;
+       // robos_core_c::current_role->run(test_frame);
+
         // ringbuffer_c robos_core_c::current_role->getoutgoingframes();
         ringbuffer_c<frame_s, 32> ringbuffer;
         while (!ringbuffer.empty()) {
             auto frame = ringbuffer.copy_and_pop();
-            // comm.send(frame);
+            if (frame.type == frame_type::EXTERNAL ) {
+                auto external_frame = frame.as_frame_type<frame_type::EXTERNAL>();
+                esp.send(external_frame);
+            } else {
+                comm.send(frame);
+            }
         }
+
+        r2d2::frame_external_s recv_external_frame;
+        bool recv = esp.receive(recv_external_frame);
+
+        if (recv) {
+            frame_s nframe;
+            nframe.data = recv_external_frame.data;
+            nframe.length = recv_external_frame.length;
+            nframe.type = recv_external_frame.type;
+            nframe.request = false;
+            ringbuffer.push(nframe);
+        }
+
         return 0;
     };
 
