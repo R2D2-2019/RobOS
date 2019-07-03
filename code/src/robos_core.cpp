@@ -95,8 +95,26 @@ namespace r2d2::robos {
         ringbuffer_c<frame_s, 32> ringbuffer;
         while (!ringbuffer.empty()) {
             auto frame = ringbuffer.copy_and_pop();
-            // comm.send(frame);
+            if (frame.type == frame_type::EXTERNAL ) {
+                auto external_frame = frame.as_frame_type<frame_type::EXTERNAL>();
+                esp.send(external_frame);
+            } else {
+                comm.send(frame);
+            }
         }
+
+        r2d2::frame_external_s recv_external_frame;
+        bool recv = esp.receive(recv_external_frame);
+
+        if (recv) {
+            frame_s nframe;
+            nframe.data = recv_external_frame.data;
+            nframe.length = recv_external_frame.length;
+            nframe.type = recv_external_frame.type;
+            nframe.request = false;
+            ringbuffer.push(nframe);
+        }
+
         return 0;
     };
 
