@@ -14,6 +14,7 @@ uint8_t r2d2::robos::moving_platform_role_c::run(ringbuffer_c<frame_s, 32> &ring
 
     while (!ringbuffer.empty()) {
         auto frame = ringbuffer.copy_and_pop();
+        r2d2::robos::robos_role_c::outgoing_frame_data.push(frame);
     }
 
     return 0;

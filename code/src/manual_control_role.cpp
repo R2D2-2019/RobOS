@@ -88,8 +88,8 @@ uint8_t r2d2::robos::manual_control_role_c::run(ringbuffer_c<frame_s, 32> &ringb
         movement.brake = brake;
         movement.rotation = steering_angle;
         movement.speed = speed;
-
-        // r2d2::robos::robos_role_c::get_outgoing_frames[0] = movement;
+ 
+        r2d2::robos::robos_role_c::outgoing_frame_data.push(movement);
         // comm.send(movement);
     }
 

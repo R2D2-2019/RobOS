@@ -13,7 +13,7 @@ namespace r2d2::robos {
     protected:
         std::array<frame_id, 10> modules{};
         std::array<frame_type, 10> packets{};
-        ringbuffer_c<frame_s, 32> outgoing_frame_data{};
+        ringbuffer_c<frame_s, 32> outgoing_frame_data;
 
     public:
         /**
