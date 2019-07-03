@@ -10,6 +10,7 @@ namespace r2d2::robos {
     void robos_core_c::process() {
         bool end = false;
         int error_code;
+        ringbuffer_c<frame_s, 32> ringbuffer;
 
         while (!end) {
             // esp comes here
@@ -27,7 +28,7 @@ namespace r2d2::robos {
                 if (frame.request) {
                     continue;
                 }
-
+                ringbuffer.push(frame);
                 // process the received packet using the appropriate
                 // frame-handler
                 // handler.process(frame);
@@ -48,7 +49,7 @@ namespace r2d2::robos {
                 error_code = robos_core_c::init_role();
                 break;
             case robos_state::RUNROLE:
-                error_code = robos_core_c::run_role();
+                error_code = robos_core_c::run_role(ringbuffer);
                 break;
             case robos_state::UPDATEMODULES:
                 error_code = robos_core_c::update_modules();
@@ -87,16 +88,15 @@ namespace r2d2::robos {
         return 0;
     };
 
-    int robos_core_c::run_role() {
-       // const std::vector<frame_type> test_frame;
-       // robos_core_c::current_role->run(test_frame);
+    int robos_core_c::run_role(ringbuffer_c<frame_s, 32> &ringbuffer) {
+        robos_core_c::current_role->run(ringbuffer);
 
-        // ringbuffer_c robos_core_c::current_role->getoutgoingframes();
-        ringbuffer_c<frame_s, 32> ringbuffer;
+        ringbuffer_c robos_core_c::current_role->getoutgoingframes();
         while (!ringbuffer.empty()) {
             auto frame = ringbuffer.copy_and_pop();
-            if (frame.type == frame_type::EXTERNAL ) {
-                auto external_frame = frame.as_frame_type<frame_type::EXTERNAL>();
+            if (frame.type == frame_type::EXTERNAL) {
+                auto external_frame =
+                    frame.as_frame_type<frame_type::EXTERNAL>();
                 esp.send(external_frame);
             } else {
                 comm.send(frame);
