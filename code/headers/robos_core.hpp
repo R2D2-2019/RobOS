@@ -30,7 +30,7 @@ namespace r2d2::robos {
         int run();
         int wait_command();
         int init_role();
-        int run_role();
+        int run_role(ringbuffer_c<frame_s, 32> &ringbuffer);
         int update_modules();
         int shutdown_robos();
     };

@@ -5,8 +5,14 @@
 namespace r2d2::robos {
 
     class manual_control_role_c : public robos_role_c {
-    public:
+    private:
+        int8_t speed = 0;
+        int8_t steering_angle = 0;
+        bool brake = false;
+        bool flag_for_send = 0;
+        bool forward = true;
 
+    public:
         /**
          * @brief
          * Constructor manual_control_role_c
@@ -24,13 +30,12 @@ namespace r2d2::robos {
          */
         robos_roles get_role_name() override;
 
-		void process_movement_control_speed(const frame_s &frame);
+        void process_movement_control_speed(const frame_s &frame);
 
         void process_movement_control_steer(const frame_s &frame);
 
         void process_movement_control_direction(const frame_s &frame);
-		
-		
+
         /**
          * @brief
          * This function handles the tasks of the role.
@@ -43,7 +48,7 @@ namespace r2d2::robos {
          * This function must be overridden by the child class
          * of the abstract class robos_role_c.
          */
-        uint8_t run(const std::array<frame_type, 10> &frames) override;
+        uint8_t run(ringbuffer_c<frame_s, 32> &ringbuffer) override;
 
         /**
          * @brief

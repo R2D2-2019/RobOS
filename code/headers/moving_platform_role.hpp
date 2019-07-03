@@ -6,7 +6,6 @@ namespace r2d2::robos {
 
     class moving_platform_role_c : public robos_role_c {
     public:
-
         /**
          * @brief
          * Constructor moving_platform_role_c
@@ -23,7 +22,7 @@ namespace r2d2::robos {
          * of the abstract class robos_role_c.
          */
         robos_roles get_role_name() override;
-		
+
         /**
          * @brief
          * This function handles the tasks of the role.
@@ -36,7 +35,7 @@ namespace r2d2::robos {
          * This function must be overridden by the child class
          * of the abstract class robos_role_c.
          */
-        uint8_t run(const std::array<frame_type, 10> &frames) override;
+        uint8_t run(ringbuffer_c<frame_s, 32> &ringbuffer) override;
 
         /**
          * @brief

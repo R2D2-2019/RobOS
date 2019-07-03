@@ -1,9 +1,11 @@
 #pragma once
 
+#include <array>
+#include <base_module.hpp>
 #include <frame_types.hpp>
+#include <ringbuffer.hpp>
 #include <robos_enums.hpp>
 #include <stdint.h>
-#include <array>
 
 namespace r2d2::robos {
 
@@ -11,7 +13,7 @@ namespace r2d2::robos {
     protected:
         std::array<frame_id, 10> modules{};
         std::array<frame_type, 10> packets{};
-        std::array<frame_type, 10> outgoing_frame_data{};
+        ringbuffer_c<frame_s, 32> outgoing_frame_data{};
 
     public:
         /**
@@ -30,14 +32,15 @@ namespace r2d2::robos {
          * of the abstract class robos_role_c.
          */
         virtual robos_roles get_role_name() = 0;
-        
+
         /**
          * @brief
          * This function returns an array of the needed modules
          * @detail
-         * This function returns all the frames that need to be send on the can bus.
+         * This function returns all the frames that need to be send on the can
+         * bus.
          */
-        virtual std::array<r2d2::frame_type, 10> get_outgoing_frames();
+        virtual ringbuffer_c<frame_s, 32> get_outgoing_frames();
 
         /**
          * @brief
@@ -69,7 +72,7 @@ namespace r2d2::robos {
          * This function must be overridden by the child class
          * of the abstract class robos_role_c.
          */
-        virtual uint8_t run(const std::array<frame_type, 10> &frames) = 0;
+        virtual uint8_t run(ringbuffer_c<frame_s, 32> &ringbuffer) = 0;
 
         /**
          * @brief

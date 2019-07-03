@@ -91,7 +91,7 @@ namespace r2d2::robos {
     int robos_core_c::run_role(ringbuffer_c<frame_s, 32> &ringbuffer) {
         robos_core_c::current_role->run(ringbuffer);
 
-        ringbuffer_c robos_core_c::current_role->getoutgoingframes();
+        ringbuffer = robos_core_c::current_role->get_outgoing_frames();
         while (!ringbuffer.empty()) {
             auto frame = ringbuffer.copy_and_pop();
             if (frame.type == frame_type::EXTERNAL) {

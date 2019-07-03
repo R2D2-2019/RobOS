@@ -2,7 +2,7 @@
 
 r2d2::robos::robos_role_c::robos_role_c(){}
 
-std::array<r2d2::frame_type, 10> r2d2::robos::robos_role_c::get_outgoing_frames(){
+r2d2::ringbuffer_c<r2d2::frame_s, 32> r2d2::robos::robos_role_c::get_outgoing_frames(){
     return outgoing_frame_data;
 }
 

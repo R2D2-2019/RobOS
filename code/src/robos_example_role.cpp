@@ -12,14 +12,9 @@ r2d2::robos::robos_roles r2d2::robos::robos_example_role_c::get_role_name() {
 }
 
 uint8_t r2d2::robos::robos_example_role_c::run(
-    const std::array<r2d2::frame_type, 10> &frames) {
+    ringbuffer_c<frame_s, 32> &ringbuffer) {
 
-    if (frames.size() > 0) {
-        frame_activity_led_state_s led_state;
-        led_state.state = frames[0];
-
-        // r2d2::robos::robos_role_c::get_outgoing_frames[0] = led_state;
-    }
+        
 
     return 0;
 }
