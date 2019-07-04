@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 #include <base_module.hpp>
 #include <esp_32.hpp>
 #include <frame_handler.hpp>
@@ -24,13 +25,13 @@ namespace r2d2::robos {
 
     public:
         robos_core_c(base_comm_c &comm, r2d2::communication::esp_32_c &esp);
-        //std::vector<frame_type> outgoing_frame_buffer;
+        // std::vector<frame_type> outgoing_frame_buffer;
         void process() override;
         int get_identity_packets();
         int run();
         int wait_command();
         int init_role();
-        int run_role(ringbuffer_c<frame_s, 32> &ringbuffer);
+        int run_role(ringbuffer_c<std::array<uint8_t, 256>, 32> &ringbuffer);
         int update_modules();
         int shutdown_robos();
     };

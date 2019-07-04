@@ -6,4 +6,4 @@ namespace r2d2::robos {
 
     enum class robos_roles { MANUAL_CONTROL, MOVING_PLATFORM, EXAMPLE_ROLE };
 
-}
+} // namespace r2d2::robos

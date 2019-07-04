@@ -13,7 +13,7 @@ namespace r2d2::robos {
     protected:
         std::array<frame_id, 10> modules{};
         std::array<frame_type, 10> packets{};
-        ringbuffer_c<frame_s, 32> outgoing_frame_data;
+        ringbuffer_c<std::array<uint8_t, 256>, 32> outgoing_frame_data;
 
     public:
         /**
@@ -40,7 +40,8 @@ namespace r2d2::robos {
          * This function returns all the frames that need to be send on the can
          * bus.
          */
-        virtual ringbuffer_c<frame_s, 32> get_outgoing_frames();
+        virtual ringbuffer_c<std::array<uint8_t, 256>, 32>
+        get_outgoing_frames();
 
         /**
          * @brief
@@ -72,7 +73,8 @@ namespace r2d2::robos {
          * This function must be overridden by the child class
          * of the abstract class robos_role_c.
          */
-        virtual uint8_t run(ringbuffer_c<frame_s, 32> &ringbuffer) = 0;
+        virtual uint8_t
+            run(ringbuffer_c<std::array<uint8_t, 256>, 32> &ringbuffer) = 0;
 
         /**
          * @brief

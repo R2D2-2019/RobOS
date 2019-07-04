@@ -10,7 +10,7 @@ namespace r2d2::robos {
     void robos_core_c::process() {
         bool end = false;
         int error_code;
-        ringbuffer_c<frame_s, 32> ringbuffer;
+        ringbuffer_c<std::array<uint8_t, 256>, 32> ringbuffer;
 
         while (!end) {
             // esp comes here
@@ -28,7 +28,20 @@ namespace r2d2::robos {
                 if (frame.request) {
                     continue;
                 }
-                ringbuffer.push(frame);
+
+                uint8_t buffer[256];
+
+                // To get the frame back:
+                // frame_type type = static_cast<frame_type>(buffer[0]);
+                // frame_button_state_s state =
+                // *(reinterpret_cast<frame_button_state_s>(buffer[1]))
+
+                buffer[0] = static_cast<uint8_t>(frame.type);
+                for (int i = 0; i < frame.length; i++) {
+                    buffer[i + 1] = frame.data[i];
+                }
+
+                ringbuffer.push(buffer);
                 // process the received packet using the appropriate
                 // frame-handler
                 // handler.process(frame);
@@ -88,18 +101,19 @@ namespace r2d2::robos {
         return 0;
     };
 
-    int robos_core_c::run_role(ringbuffer_c<frame_s, 32> &ringbuffer) {
+    int robos_core_c::run_role(ringbuffer_c<uint8_t[256], 32> &ringbuffer) {
         robos_core_c::current_role->run(ringbuffer);
 
         ringbuffer = robos_core_c::current_role->get_outgoing_frames();
+
         while (!ringbuffer.empty()) {
-            auto frame = ringbuffer.copy_and_pop();
-            if (frame.type == frame_type::EXTERNAL) {
-                auto external_frame =
-                    frame.as_frame_type<frame_type::EXTERNAL>();
-                esp.send(external_frame);
+            std::array<uint8_t, 256> hackframe = ringbuffer.copy_and_pop();
+            frame_type type = static_cast<frame_type>(hackframe[0]);
+            if (type == frame_type::EXTERNAL) {
+                auto external_frame = hackframe;
+                esp.send(hackframe);
             } else {
-                comm.send(frame);
+                comm.send(hackframe);
             }
         }
 
@@ -124,7 +138,7 @@ namespace r2d2::robos {
     };
 
     int robos_core_c::update_modules() {
-        ringbuffer_c<frame_s, 32> ringbuffer;
+        ringbuffer_c<std::array<uint8_t, 256>, 32> ringbuffer;
         comm.request(IDENTITY);
         hwlib::wait_ms(1000);
         int mod_list_counter = 0;

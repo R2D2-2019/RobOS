@@ -12,9 +12,7 @@ r2d2::robos::robos_roles r2d2::robos::robos_example_role_c::get_role_name() {
 }
 
 uint8_t r2d2::robos::robos_example_role_c::run(
-    ringbuffer_c<frame_s, 32> &ringbuffer) {
-
-        
+    ringbuffer_c<std::array<uint8_t, 256>, 32> &ringbuffer) {
 
     return 0;
 }

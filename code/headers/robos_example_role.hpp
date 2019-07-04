@@ -6,7 +6,6 @@ namespace r2d2::robos {
 
     class robos_example_role_c : public robos_role_c {
     public:
-
         /**
          * @brief
          * Constructor robos_example_role_c
@@ -36,7 +35,8 @@ namespace r2d2::robos {
          * This function must be overridden by the child class
          * of the abstract class robos_role_c.
          */
-        uint8_t run(ringbuffer_c<frame_s, 32> &ringbuffer) override;
+        uint8_t run(
+            ringbuffer_c<std::array<uint8_t, 256>, 32> &ringbuffer) override;
 
         /**
          * @brief

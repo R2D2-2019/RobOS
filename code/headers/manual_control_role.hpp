@@ -30,11 +30,14 @@ namespace r2d2::robos {
          */
         robos_roles get_role_name() override;
 
-        void process_movement_control_speed(const frame_s &frame);
+        void process_movement_control_speed(
+            const frame_manual_control_slider_s &frame);
 
-        void process_movement_control_steer(const frame_s &frame);
+        void process_movement_control_steer(
+            const frame_manual_control_joystick_s &frame);
 
-        void process_movement_control_direction(const frame_s &frame);
+        void process_movement_control_direction(
+            const frame_manual_control_button_s &frame);
 
         /**
          * @brief
@@ -48,7 +51,8 @@ namespace r2d2::robos {
          * This function must be overridden by the child class
          * of the abstract class robos_role_c.
          */
-        uint8_t run(ringbuffer_c<frame_s, 32> &ringbuffer) override;
+        uint8_t run(
+            ringbuffer_c<std::array<uint8_t, 256>, 32> &ringbuffer) override;
 
         /**
          * @brief
