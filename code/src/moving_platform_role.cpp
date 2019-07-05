@@ -10,7 +10,7 @@ r2d2::robos::robos_roles r2d2::robos::moving_platform_role_c::get_role_name() {
 }
 
 uint8_t
-r2d2::robos::moving_platform_role_c::run(ringbuffer_c<frame_s, 32> &ringbuffer,
+r2d2::robos::moving_platform_role_c::run(ringbuffer_c<std::array<uint8_t, 256>, 32> &ringbuffer,
                                          base_comm_c &comm) {
 
     while (!ringbuffer.empty()) {
