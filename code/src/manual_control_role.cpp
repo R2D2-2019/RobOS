@@ -51,7 +51,7 @@ void r2d2::robos::manual_control_role_c::process_movement_control_direction(
 }
 
 uint8_t r2d2::robos::manual_control_role_c::run(
-    ringbuffer_c<std::array<uint8_t, 256>, 32> &ringbuffer) {
+    ringbuffer_c<std::array<uint8_t, 256>, 32> &ringbuffer, base_comm_c &comm) {
 
     while (!ringbuffer.empty()) {
         std::array<uint8_t, 256> hackframe = ringbuffer.copy_and_pop();
@@ -94,11 +94,6 @@ uint8_t r2d2::robos::manual_control_role_c::run(
         movement.brake = brake;
         movement.rotation = steering_angle;
         movement.speed = speed;
-        uint8_t buffer[256];
-        buffer[0] = frame_type::MOVEMENT_CONTROL;
-        for (int i = 0; i < movement.length; i++) {
-            buffer[i + 1] = movement.data[i];
-        }
 
         comm.send(movement);
     }
