@@ -8,11 +8,11 @@ namespace r2d2::robos {
     }
 
     void robos_core_c::process() {
-        bool end = false;
-        int error_code;
-        ringbuffer_c<std::array<uint8_t, 256>, 32> ringbuffer;
+        // bool end = false;
+        // int error_code;
+        // ringbuffer_c<std::array<uint8_t, 256>, 32> ringbuffer;
 
-        while (!end) {
+        while (!shutdown) {
             // esp comes here
             // Set out all polling requests
             for (auto &request : requests) {
@@ -29,16 +29,16 @@ namespace r2d2::robos {
                     continue;
                 }
 
-                uint8_t buffer[256];
+                std::array<uint8_t, 256> buffer;
+                // uint8_t [256];
 
                 // To get the frame back:
                 // frame_type type = static_cast<frame_type>(buffer[0]);
                 // frame_button_state_s state =
                 // *(reinterpret_cast<frame_button_state_s>(buffer[1]))
-
                 buffer[0] = static_cast<uint8_t>(frame.type);
-                for (int i = 0; i < frame.length; i++) {
-                    buffer[i + 1] = frame.data[i];
+                for (unsigned int i = 0; i < frame.length; i++) {
+                    buffer[i + 1] = (frame.data[i]);
                 }
 
                 ringbuffer.push(buffer);
@@ -69,9 +69,8 @@ namespace r2d2::robos {
                 break;
             case robos_state::SHUTDOWN:
                 error_code = robos_core_c::shutdown_robos();
-                end = true;
+                shutdown = true;
             }
-            end = true;
         }
     };
 
@@ -101,21 +100,23 @@ namespace r2d2::robos {
         return 0;
     };
 
-    int robos_core_c::run_role(ringbuffer_c<uint8_t[256], 32> &ringbuffer) {
-        robos_core_c::current_role->run(ringbuffer);
+    int robos_core_c::run_role(
+        ringbuffer_c<std::array<uint8_t, 256>, 32> &ringbuffer) {
+        robos_core_c::current_role->run(ringbuffer, comm);
 
-        ringbuffer = robos_core_c::current_role->get_outgoing_frames();
-
+        // ringbuffer = robos_core_c::current_role->get_outgoing_frames();
+        /*
         while (!ringbuffer.empty()) {
             std::array<uint8_t, 256> hackframe = ringbuffer.copy_and_pop();
             frame_type type = static_cast<frame_type>(hackframe[0]);
             if (type == frame_type::EXTERNAL) {
                 auto external_frame = hackframe;
-                esp.send(hackframe);
+                esp.send(external_frame);
             } else {
                 comm.send(hackframe);
             }
         }
+        */
 
         r2d2::frame_external_s recv_external_frame;
         bool recv = esp.receive(recv_external_frame);
@@ -126,7 +127,7 @@ namespace r2d2::robos {
             nframe.length = recv_external_frame.length;
             nframe.type = recv_external_frame.type;
             nframe.request = false;
-            ringbuffer.push(nframe);
+            // ringbuffer.push(nframe);
         }
 
         return 0;
@@ -138,7 +139,6 @@ namespace r2d2::robos {
     };
 
     int robos_core_c::update_modules() {
-        ringbuffer_c<std::array<uint8_t, 256>, 32> ringbuffer;
         comm.request(IDENTITY);
         hwlib::wait_ms(1000);
         int mod_list_counter = 0;
@@ -148,6 +148,13 @@ namespace r2d2::robos {
                 const auto data = frame.as_frame_type<frame_type::IDENTITY>();
                 mod_list[mod_list_counter] = data.type;
             } else {
+                std::array<uint8_t, 256> buffer;
+                buffer[0] = static_cast<uint8_t>(frame.type);
+                for (unsigned int i = 0; i < frame.length; i++) {
+                    buffer[i + 1] = (frame.data[i]);
+                }
+
+                ringbuffer.push(buffer);
             }
             mod_list_counter += 1;
         }
