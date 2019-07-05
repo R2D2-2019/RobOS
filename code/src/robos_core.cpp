@@ -104,7 +104,8 @@ namespace r2d2::robos {
         ringbuffer_c<std::array<uint8_t, 256>, 32> &ringbuffer) {
         robos_core_c::current_role->run(ringbuffer, comm);
 
-        // ringbuffer = robos_core_c::current_role->get_outgoing_frames();
+        // This code has been commented out as this needs to be reimplemented
+        // elsewhere once some external com issues have been figured out.
         /*
         while (!ringbuffer.empty()) {
             std::array<uint8_t, 256> hackframe = ringbuffer.copy_and_pop();
