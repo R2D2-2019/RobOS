@@ -36,6 +36,18 @@ namespace r2d2::robos {
          * initialized with the base_comm_c object reference.
          */
         robos_core_c(base_comm_c &comm, r2d2::communication::esp_32_c &esp);
+
+        /**
+         * @brief
+         * Init function to set the initial state of robos_core
+         * @detail
+         * Init function that take a robos_state enum class as a parameter and
+         * sets robos_core_c::state to it.
+         * @param init state : robos_state
+         * init_state parameter to set robos_core_c state.
+         */
+        void init(robos_state init_state);
+
         /**
          * @brief
          * Overriden function of the base_module_c parent class that is called

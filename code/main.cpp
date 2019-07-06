@@ -18,7 +18,7 @@ int main(void) {
     auto esp = r2d2::communication::esp_32_c(spi_bus, ss, hs);
     r2d2::comm_c comm;
     auto robos = r2d2::robos::robos_core_c(comm, esp);
-
+    robos.init(r2d2::robos::robos_state::WAIT);
     while (true) {
         robos.process();
         hwlib::wait_ms(150);

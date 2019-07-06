@@ -8,10 +8,6 @@ namespace r2d2::robos {
     }
 
     void robos_core_c::process() {
-        // bool end = false;
-        // int error_code;
-        // ringbuffer_c<std::array<uint8_t, 256>, 32> ringbuffer;
-
         while (!shutdown) {
             // esp comes here
             // Set out all polling requests
@@ -73,6 +69,10 @@ namespace r2d2::robos {
             }
         }
     };
+
+    void robos_core_c::init(robos_state init_state) {
+        robos_core_c::state = init_state;
+    }
 
     int robos_core_c::wait_command() {
         robos_core_c::state = robos_state::INITROLE;
